@@ -37,15 +37,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        db.collection("users-test").add(user)
-            .addOnSuccessListener{ documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-
-
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
         // Create a new user with a first, middle, and last name
         val user2 = hashMapOf(
             "first" to "Alan",
@@ -53,16 +44,6 @@ class MainActivity : ComponentActivity() {
             "last" to "Turing",
             "born" to 1912,
         )
-
-        // Add a new document with a generated ID
-        db.collection("users-test")
-            .add(user2)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
     }
 }
 
