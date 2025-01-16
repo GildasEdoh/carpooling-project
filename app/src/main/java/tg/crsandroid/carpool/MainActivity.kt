@@ -1,19 +1,16 @@
 package tg.crsandroid.carpool
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.ui.theme.CarpoolTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,14 +25,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CarpoolTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            LoginScreen(
+                onLoginClick = { print("cliecj") },
+                onSignUpClick =  { print("cliecj") },
+                onGoogleLoginClick = { print("cliecj") },
+            )
         }
         // Create a new user with a first, middle, and last name
         val user2 = hashMapOf(
