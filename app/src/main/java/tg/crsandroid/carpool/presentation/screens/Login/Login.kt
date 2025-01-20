@@ -11,8 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tg.crsandroid.carpool.R
@@ -23,11 +26,7 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = Brush.horizontalGradient(colors = listOf(
-                Color(0xFFD32F2F),
-                Color(0xFFE03333),
-                Color(0xFFD9001D),
-            )))
+            .background(Color.White)
     ) {
         // Conteneur pour centrer l'image
         Box(
@@ -43,7 +42,7 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
         Card(
             modifier = Modifier
 //                .fillMaxWidth()
-                .width(415.dp) // Largeur de la carte
+                .width(400.dp) // Largeur de la carte
 //                .height(150.dp) // Hauteur de la carte
                 .padding(bottom = 16.dp) // Espacement en bas
                 .align(Alignment.BottomCenter), // Aligner la carte en bas au centre
@@ -66,8 +65,9 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
                 ) {
                     Text(
                         text = "Login with Google",
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         fontSize = 16.sp,
+                        fontFamily = poppinsFontFamily,
                         color = Color.Gray
                     )
                 }
@@ -87,7 +87,13 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
                             .padding(end = 8.dp) // Espacement entre les boutons
                             .height(50.dp) // Hauteur du bouton
                     ) {
-                        Text(text = "Login", color = Color.White, fontSize = 16.sp)
+                        Text(
+                            text = "Login",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                        )
                     }
 
                     // Bouton Sign Up
@@ -100,7 +106,12 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
                             .padding(start = 8.dp) // Espacement entre les boutons
                             .height(50.dp) // Hauteur du bouton
                     ) {
-                        Text(text = "Sign Up", color = Color.White, fontSize = 16.sp)
+                        Text(text = "Sign Up",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                        )
                     }
                 }
             }
@@ -108,21 +119,72 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
     }
 }
 
+//@Composable
+//fun LoginPageImage() {
+//    Box(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .fillMaxHeight()
+//            .height(400.dp) // Hauteur de l'image
+//    ) {
+//        Image(
+//            painter = painterResource(id = R.drawable.home_img),
+//            contentDescription = "Login Image",
+//            modifier = Modifier
+//                .fillMaxSize()
+//        )
+//        Text(
+//            text = "Carpool",
+//            modifier = Modifier.align(Alignment.BottomCenter),
+//            fontFamily = poppinsFontFamily,
+//            fontWeight = FontWeight.Bold,
+//            color = Color.Black,
+//            fontSize = 52.sp
+//        )
+//    }
+//}
+
 @Composable
 fun LoginPageImage() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp) // Hauteur de l'image
+            .height(450.dp) // Hauteur fixe de l'image
     ) {
-        Text(
-            text = "Override",
-            modifier = Modifier
-                .align(Alignment.BottomCenter),
-            fontFamily = poppinsFontFamily,
-            color = Color.White,
-            fontSize = 64.sp,
-            fontWeight = FontWeight.Bold
+        // Image de fond
+        Image(
+            painter = painterResource(id = R.drawable.home_img),
+            contentDescription = "Login Image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit // Respect des proportions de l'image
         )
+
+        // Contenu aligné en bas de l'image
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp), // Espacement en bas
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Texte principal
+            Text(
+                text = "Carpool",
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                fontSize = 52.sp
+            )
+
+            // Paragraphe d'accroche
+            Text(
+                text = "Simplifiez vos trajets quotidiens avec des solutions de covoiturage adaptées à vos besoins.",
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Normal,
+                color = Color.Black.copy(alpha = 0.8f), // Transparence pour un contraste doux
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp) // Marges sur les côtés
+            )
+        }
     }
 }
