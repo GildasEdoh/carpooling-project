@@ -8,7 +8,8 @@ data class utilisateur(
 
   var reservations: List<String> = mutableListOf(),
   var type: String? = "",
-  var numPhone: String? = ""
+  var numPhone: String? = "",
+  var password: String? = ""
 ) {
     companion object {
         const val COLLECTIONS_USERS = "users"
