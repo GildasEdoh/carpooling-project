@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
+import tg.crsandroid.carpool.presentation.screens.home.HomeScreen
 import tg.crsandroid.carpool.ui.theme.CarpoolTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,22 +26,7 @@ class MainActivity : ComponentActivity() {
                 onSignUpClick =  { print("cliecj") },
                 onGoogleLoginClick = { print("cliecj") },
             )
+//            HomeScreen()
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CarpoolTheme {
-        Greeting("Android")
     }
 }
