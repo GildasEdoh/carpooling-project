@@ -19,8 +19,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
-
+/*
 @Composable
+// by ariel
 fun LoginPage(
     onLogin: (email: String, password: String) -> Unit,
     onNavigateToSignUp: () -> Unit,
@@ -53,8 +54,7 @@ fun LoginPage(
         }
     }
 }
-/*
-=======
+*/
 @Composable
 fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLoginClick: () -> Unit) {
     Box(
@@ -143,7 +143,7 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
             }
         }
     }
-}*/
+}
 
 @Composable
 fun LoginPageImage() {
