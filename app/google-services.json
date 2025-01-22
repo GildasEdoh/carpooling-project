@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "605213219236",
-    "project_id": "carpool-cfdc3",
-    "storage_bucket": "carpool-cfdc3.firebasestorage.app"
+    "project_number": "479559346358",
+    "project_id": "carpooling-project-83304",
+    "storage_bucket": "carpooling-project-83304.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:605213219236:android:920620c0c8d90b26104931",
+        "mobilesdk_app_id": "1:479559346358:android:8a791e779c4336d8649e17",
         "android_client_info": {
           "package_name": "tg.crsandroid.carpool"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDTsNvKk35wekyCqAHF4DJ7N1LmO2HUjps"
+          "current_key": "AIzaSyAHD6mJnVQ0TJOJ7wnULMygvV1U-XMz4jA"
         }
       ],
       "services": {

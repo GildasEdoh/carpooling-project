@@ -1,16 +1,24 @@
 package com.example.carpooling_project.model
 
-class Utilisateur {
-    private val id: Int = 0
-    private val nom : String = ""
-    private val prenoms: String = ""
-    private val address: String = ""
-    private val tel: Int = 0
+data class utilisateur(
+  var id : String? = "",
+  var nom : String? = "",
+  var prenom : String? = "",
+  var email: String? = "",
 
+  var reservations: List<String> = mutableListOf(),
+  var type: String? = "",
+  var numPhone: String? = ""
+) {
     companion object {
-        private val ID = "id"
-        private val NOM = "nom"
-        private val PRESNOMS = "addess"
-        private val ADRESS = "address"
+        const val COLLECTIONS_USERS = "users"
+        
+        const val ID_FIELD = "id"
+        const val NOM_FIELD = "nom"
+        const val PRENOM_FIELD = "prenom"
+        const val EMAIL_FIELD = "email"
+        const val SEATS_FIELD = "nbrSeats"
+        const val TYPE_FIELD = "type"
+
     }
 }
