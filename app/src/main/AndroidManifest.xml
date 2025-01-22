@@ -13,6 +13,10 @@
         android:theme="@style/Theme.Carpool"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.screens.ride.RideListActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Carpool" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

@@ -1,14 +1,14 @@
 package tg.crsandroid.carpool.model
 
 data class Trajet (
-     var id: String? = "",
-     var lieuDepart: String? = "",
-     var lieuArrivee: String? = "",
-     var heureDepart: String? = "",
-     var heureArrivee: String? = "",
-     var duree: String? = "",
-     var nbrSeats: String? = "",
-     val idConducteur: String? = "",
+     var id: String = "",
+     var lieuDepart: String = "",
+     var lieuArrivee: String = "",
+     var heureDepart: String = "",
+     var heureArrivee: String = "",
+     var duree: String = "",
+     var nbrSeats: String = "",
+     val idConducteur: String = "",
      var reservations: List<String> = mutableListOf()
 ) {
     companion object {

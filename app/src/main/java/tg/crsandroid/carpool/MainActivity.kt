@@ -1,5 +1,6 @@
 package tg.crsandroid.carpool
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +13,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.presentation.screens.home.HomeScreen
+import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
 import tg.crsandroid.carpool.ui.theme.CarpoolTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,11 +29,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LoginScreen(
-                onLoginClick = { print("cliecj") },
+                onLoginClick = {
+                    print("cliecj")
+                    startRideList()
+                },
                 onSignUpClick =  { print("cliecj") },
                 onGoogleLoginClick = { print("cliecj") },
             )
-//            HomeScreen()
+        //HomeScreen()
         }
         // Create a new user with a first, middle, and last name
         val user2 = hashMapOf(
@@ -40,5 +45,9 @@ class MainActivity : ComponentActivity() {
             "last" to "Turing",
             "born" to 1912,
         )
+    }
+    fun startRideList() {
+        val intent = Intent(this, RideListActivity::class.java)
+        startActivity(intent)
     }
 }
