@@ -1,7 +1,7 @@
 package tg.crsandroid.carpool.model
 
 class Conducteur {
-    private val id: Int = 0
+    private val id: String = ""
     private val nom : String = ""
     private val prenoms: String = ""
     private val address: String = ""
