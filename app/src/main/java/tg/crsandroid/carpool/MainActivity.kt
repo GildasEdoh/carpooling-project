@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
+import tg.crsandroid.carpool.presentation.screens.home.HomeScreen
 import tg.crsandroid.carpool.ui.theme.CarpoolTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
                 onSignUpClick =  { print("cliecj") },
                 onGoogleLoginClick = { print("cliecj") },
             )
+//            HomeScreen()
         }
         // Create a new user with a first, middle, and last name
         val user2 = hashMapOf(
@@ -38,21 +40,5 @@ class MainActivity : ComponentActivity() {
             "last" to "Turing",
             "born" to 1912,
         )
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CarpoolTheme {
-        Greeting("Android")
     }
 }
