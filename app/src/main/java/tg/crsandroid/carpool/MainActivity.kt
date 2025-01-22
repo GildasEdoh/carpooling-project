@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
             LoginScreen(
                 onLoginClick = {
                     print("cliecj")
-                    startRideList()
+                   //  startRideList()
                 },
                 onSignUpClick =  { print("cliecj") },
                 onGoogleLoginClick = { print("cliecj") },
