@@ -1,6 +1,6 @@
 package com.example.carpooling_project.model
 
-data class utilisateur(
+data class Utilisateur(
   var id : String? = "",
   var nom : String? = "",
   var prenom : String? = "",

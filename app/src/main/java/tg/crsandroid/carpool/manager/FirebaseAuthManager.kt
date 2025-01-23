@@ -17,6 +17,7 @@ class FirebaseAuthManager {
                 } else {
                     onResult(false, task.exception?.message)
                 }
+
             }
     }
 

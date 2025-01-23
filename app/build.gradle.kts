@@ -56,9 +56,16 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation ("androidx.compose.material3:material3:1.2.0") // Vérifiez la version la plus récente
     implementation(libs.firebase.firestore.ktx)
-    implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.auth)
+    implementation ("com.google.android.gms:play-services-auth:20.6.0")
+
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

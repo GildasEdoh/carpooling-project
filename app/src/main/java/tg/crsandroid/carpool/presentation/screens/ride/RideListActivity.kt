@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.ui.AppBarConfiguration
 import tg.crsandroid.carpool.model.Trajet
 
 class RideListActivity : ComponentActivity() {
@@ -182,5 +181,4 @@ class RideListActivity : ComponentActivity() {
     fun reserverTrajet(trajet: Trajet) {
         Log.i("RideListActivity ", "Rseverver trajet : ${trajet.id}")
     }
-
 }

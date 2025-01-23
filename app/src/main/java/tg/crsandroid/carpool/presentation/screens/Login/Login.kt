@@ -18,59 +18,18 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
-/*
-@Composable
-// by ariel
-fun LoginPage(
-    onLogin: (email: String, password: String) -> Unit,
-    onNavigateToSignUp: () -> Unit,
-    onGoogleSignIn: () -> Unit
-) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Login", style = MaterialTheme.typography.titleMedium)
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") }
-        )
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation()
-        )
-        Button(onClick = { onLogin(email, password) }, modifier = Modifier.padding(top = 8.dp)) {
-            Text("Login")
-        }
-        TextButton(onClick = onNavigateToSignUp) {
-            Text("Don't have an account? Sign Up")
-        }
-        Button(onClick = onGoogleSignIn, modifier = Modifier.padding(top = 8.dp)) {
-            Text("Sign in with Google")
-        }
-    }
-}
-*/
 @Composable
 fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLoginClick: () -> Unit) {
     Box(
@@ -168,31 +127,6 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
         }
     }
 }
-
-//@Composable
-//fun LoginPageImage() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .fillMaxHeight()
-//            .height(400.dp) // Hauteur de l'image
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.home_img),
-//            contentDescription = "Login Image",
-//            modifier = Modifier
-//                .fillMaxSize()
-//        )
-//        Text(
-//            text = "Carpool",
-//            modifier = Modifier.align(Alignment.BottomCenter),
-//            fontFamily = poppinsFontFamily,
-//            fontWeight = FontWeight.Bold,
-//            color = Color.Black,
-//            fontSize = 52.sp
-//        )
-//    }
-//}
 
 @Composable
 fun LoginPageImage() {
