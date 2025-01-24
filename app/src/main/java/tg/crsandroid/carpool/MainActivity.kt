@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -75,6 +76,7 @@ class MainActivity : ComponentActivity() {
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { result ->
+            Log.i("Page auth", "code : ${result.resultCode}, data : ${result.data}")
             if (result.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 handleSignInResult(context, task)
@@ -118,6 +120,8 @@ class MainActivity : ComponentActivity() {
                             "Connexion réussie : ${it.displayName}",
                             Toast.LENGTH_SHORT
                         ).show()
+
+                        startRideList()
                     } else {
                         Toast.makeText(context, "Erreur : $error", Toast.LENGTH_SHORT).show()
                     }
