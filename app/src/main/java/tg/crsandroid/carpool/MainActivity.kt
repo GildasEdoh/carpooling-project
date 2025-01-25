@@ -23,9 +23,11 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.runBlocking
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
+import tg.crsandroid.carpool.service.FirestoreService
 
 
 class MainActivity : ComponentActivity() {
@@ -128,7 +130,7 @@ class MainActivity : ComponentActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        startRideList()
+                        startRideList(user)
                     } else {
                         Toast.makeText(context, "Erreur : $error", Toast.LENGTH_SHORT).show()
                     }
@@ -138,7 +140,10 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(context, "Google sign-in échoué : ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
-    fun startRideList() {
+    fun startRideList(user: Utilisateur) {
+        runBlocking {
+            FirestoreService.usersRepo.addUser(user)
+        }
         val intent = Intent(this, RideListActivity::class.java)
         startActivity(intent)
     }
