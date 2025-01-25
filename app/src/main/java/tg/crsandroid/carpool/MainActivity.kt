@@ -1,10 +1,8 @@
 package tg.crsandroid.carpool
-
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,7 +12,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import com.example.carpooling_project.model.Utilisateur
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -77,7 +74,6 @@ class MainActivity : ComponentActivity() {
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            Log.i("Page auth", "code : ${result.resultCode}, data : ${result.data}")
             if (result.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 handleSignInResult(context, task)
@@ -111,24 +107,16 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleSignInResult(context: Context, task: Task<GoogleSignInAccount>) {
-        var user: Utilisateur = Utilisateur()
         try {
             val account = task.getResult(ApiException::class.java)
             account?.let {
                 authManager.signInWithGoogle(it) { isSuccess, error ->
                     if (isSuccess) {
-                        // Recuperation de l'utilisateur
-                        user.nom = it.familyName
-                        user.prenom = it.givenName
-                        user.email = it.email
-                        user.id = it.id
                         Toast.makeText(
                             context,
-                            "Connexion réussie : ${it.id}",
+                            "Connexion réussie : ${it.displayName}",
                             Toast.LENGTH_SHORT
                         ).show()
-
-                        startRideList()
                     } else {
                         Toast.makeText(context, "Erreur : $error", Toast.LENGTH_SHORT).show()
                     }
