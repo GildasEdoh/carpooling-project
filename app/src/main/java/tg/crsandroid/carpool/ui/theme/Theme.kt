@@ -76,9 +76,9 @@ fun CarpoolTheme(
 }
 
 private val DarkColorScheme = darkColorScheme(
-    primary = tg.ulcrsandroid.jetchatcompose.ui.theme.Purple80,
-    secondary = tg.ulcrsandroid.jetchatcompose.ui.theme.PurpleGrey80,
-    tertiary = tg.ulcrsandroid.jetchatcompose.ui.theme.Pink80
+    primary = tg.crsandroid.carpool.ui.theme.Purple80,
+    secondary = tg.crsandroid.carpool.ui.theme.PurpleGrey80,
+    tertiary = tg.crsandroid.carpool.ui.theme.Pink80
 )
 
 @Composable
@@ -100,7 +100,7 @@ fun JetChatComposeTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = tg.ulcrsandroid.jetchatcompose.ui.theme.Typography,
+        typography = tg.crsandroid.carpool.ui.theme.Typography,
         content = content
     )
 }
