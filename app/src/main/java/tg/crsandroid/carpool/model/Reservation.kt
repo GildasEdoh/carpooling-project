@@ -1,11 +1,11 @@
 package tg.crsandroid.carpool.model
 
 data class Reservation (
-    var id : String? = "",
-    var idConducteur: String? = "",
+    var id : String = "",
+    var idConducteur: String = "",
     var idPassagers:List<String> = mutableListOf(),
-    var date: String? = "",
-    var idTrajet: String? = ""
+    var date: String = "",
+    var idTrajet: String = ""
 ) {
     companion object {
         const val COLLECTIONS_RESERVATIONS = "reservations"
