@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="tg.crsandroid.carpool" />
-                  <option name="mobileSdkAppId" value="1:605213219236:android:920620c0c8d90b26104931" />
-                  <option name="projectId" value="carpool-cfdc3" />
-                  <option name="projectNumber" value="605213219236" />
+                  <option name="mobileSdkAppId" value="1:479559346358:android:8a791e779c4336d8649e17" />
+                  <option name="projectId" value="carpooling-project-83304" />
+                  <option name="projectNumber" value="479559346358" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

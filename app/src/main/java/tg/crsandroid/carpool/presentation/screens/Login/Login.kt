@@ -31,7 +31,7 @@ import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 @Composable
-fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLoginClick: () -> Unit) {
+fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit, onGoogleLoginClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -88,7 +88,7 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
                 ) {
                     // Bouton Login
                     Button(
-                        onClick = onLoginClick,
+                        onClick = { TODO() },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF001F7F)),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
@@ -107,7 +107,7 @@ fun LoginScreen(onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onGoogleLog
 
                     // Bouton Sign Up
                     Button(
-                        onClick = onSignUpClick,
+                        onClick = { TODO() },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF001F7F)),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier

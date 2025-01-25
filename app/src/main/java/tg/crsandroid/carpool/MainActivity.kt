@@ -25,53 +25,36 @@ import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
 
-
 class MainActivity : ComponentActivity() {
+    // Firebase and Authentication properties
+    private val db = Firebase.firestore
+    private val authManager = FirebaseAuthManager()
+    private lateinit var googleSignInClient: GoogleSignInClient
 
-    val db = Firebase.firestore
-    val TAG = "BASE Firestore"
-    private var authManager = FirebaseAuthManager()
-    private lateinit var googleSignClient : GoogleSignInClient
-    // private val googleSignInClient = remenber {provideGoo}
-    val user = hashMapOf(
-        "first" to "ada",
-        "last" to "lovelace",
-        "born" to 2015,
-    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Initialize Google Sign In
+        initializeGoogleSignIn()
+
         setContent {
-            /*
-            LoginScreen(
-                onLoginClick = {
-                    print("cliecj")
-                   //  startRideList()
-                },
-                onSignUpClick =  { print("cliecj") },
-                onGoogleLoginClick = {  },
-            )*/
             AppContent()
         }
-        // Create a new user with a first, middle, and last name
-        val user2 = hashMapOf(
-            "first" to "Alan",
-            "middle" to "Mathison",
-            "last" to "Turing",
-            "born" to 1912,
-        )
+    }
+
+    private fun initializeGoogleSignIn() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
     }
 
     @Composable
     fun AppContent() {
         val context = LocalContext.current
 
-        // Fournit une instance de GoogleSignInClient
-        val googleSignInClient = remember {
-            provideGoogleSignInClient(context)
-        }
-
-        // Gestionnaire pour lancer l'intent de connexion Google
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -79,32 +62,28 @@ class MainActivity : ComponentActivity() {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 handleSignInResult(context, task)
             } else {
-                Toast.makeText(context, "Connexion annulée", Toast.LENGTH_SHORT).show()
+                showToast(context, "Connexion annulée")
             }
         }
 
         LoginScreen(
             onLoginClick = {
-                // Logique pour le bouton Login
-                println("Login clicked")
+                // Handle email/password login here if needed
+                showToast(context, "Login clicked")
             },
             onSignUpClick = {
-                // Logique pour le bouton Sign Up
-                println("Sign Up clicked")
+                // Handle sign up here if needed
+                showToast(context, "Sign Up clicked")
             },
             onGoogleLoginClick = {
-                // Lancer l'intent Google Sign-In
-                val signInIntent = googleSignInClient.signInIntent
-                launcher.launch(signInIntent)
+                startGoogleSignIn(launcher)
             }
         )
     }
-    private fun provideGoogleSignInClient(context: Context): GoogleSignInClient {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        return GoogleSignIn.getClient(context, gso)
+
+    private fun startGoogleSignIn(launcher: androidx.activity.result.ActivityResultLauncher<Intent>) {
+        val signInIntent = googleSignInClient.signInIntent
+        launcher.launch(signInIntent)
     }
 
     private fun handleSignInResult(context: Context, task: Task<GoogleSignInAccount>) {
@@ -113,22 +92,48 @@ class MainActivity : ComponentActivity() {
             account?.let {
                 authManager.signInWithGoogle(it) { isSuccess, error ->
                     if (isSuccess) {
-                        Toast.makeText(
-                            context,
-                            "Connexion réussie : ${it.displayName}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        // Save user data if needed
+                        saveUserToFirestore(it)
+                        // Navigate to RideList screen
+                        navigateToRideList()
+                        showToast(context, "Connexion réussie : ${it.displayName}")
                     } else {
-                        Toast.makeText(context, "Erreur : $error", Toast.LENGTH_SHORT).show()
+                        showToast(context, "Erreur : $error")
                     }
                 }
             }
         } catch (e: ApiException) {
-            Toast.makeText(context, "Google sign-in échoué : ${e.message}", Toast.LENGTH_SHORT).show()
+            showToast(context, "Google sign-in échoué : ${e.message}")
         }
     }
-    fun startRideList() {
-        val intent = Intent(this, RideListActivity::class.java)
-        startActivity(intent)
+
+    private fun saveUserToFirestore(account: GoogleSignInAccount) {
+        val userData = hashMapOf(
+            "email" to account.email,
+            "displayName" to account.displayName,
+            "photoUrl" to (account.photoUrl?.toString() ?: ""),
+            "lastLogin" to System.currentTimeMillis()
+        )
+
+        account.id?.let { userId ->
+            db.collection("users")
+                .document(userId)
+                .set(userData)
+                .addOnFailureListener { e ->
+                    println("Error saving user data: ${e.message}")
+                }
+        }
+    }
+
+    private fun navigateToRideList() {
+        Intent(this, RideListActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(this)
+            finish() //
+        }
+    }
+
+    private fun showToast(context: Context, message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }
