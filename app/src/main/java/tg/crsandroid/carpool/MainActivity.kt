@@ -23,6 +23,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import tg.crsandroid.carpool.chat.ChatActivity
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
@@ -128,7 +129,8 @@ class MainActivity : ComponentActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        startRideList()
+                        // startRideList()
+                        startChat()
                     } else {
                         Toast.makeText(context, "Erreur : $error", Toast.LENGTH_SHORT).show()
                     }
@@ -140,6 +142,10 @@ class MainActivity : ComponentActivity() {
     }
     fun startRideList() {
         val intent = Intent(this, RideListActivity::class.java)
+        startActivity(intent)
+    }
+    fun startChat() {
+        val intent = Intent(this, ChatActivity::class.java)
         startActivity(intent)
     }
 }
