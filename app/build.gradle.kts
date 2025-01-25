@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.auth)
     implementation ("com.google.android.gms:play-services-auth:20.6.0")
+    implementation("com.google.maps.android:maps-compose:4.3.3")
 
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.appcompat)
