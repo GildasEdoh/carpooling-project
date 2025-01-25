@@ -1,5 +1,6 @@
 package tg.crsandroid.carpool.manager
 
+import androidx.compose.runtime.Composable
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -17,6 +18,7 @@ class FirebaseAuthManager {
                 } else {
                     onResult(false, task.exception?.message)
                 }
+
             }
     }
 

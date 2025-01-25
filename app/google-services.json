@@ -12,7 +12,20 @@
           "package_name": "tg.crsandroid.carpool"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "479559346358-6v95bgtrtmnn5qi33trlsv6b7ut8pid9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tg.crsandroid.carpool",
+            "certificate_hash": "20681b61685962af694a3115fc40ca8a8dac5b5c"
+          }
+        },
+        {
+          "client_id": "479559346358-ek4fml8rshug7qndanddoieijhpae3lj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAHD6mJnVQ0TJOJ7wnULMygvV1U-XMz4jA"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "479559346358-ek4fml8rshug7qndanddoieijhpae3lj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
