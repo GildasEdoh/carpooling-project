@@ -1,4 +1,4 @@
-package tg.crsandroid.carpool.chat
+package tg.crsandroid.carpool.presentation.screens.chat
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
