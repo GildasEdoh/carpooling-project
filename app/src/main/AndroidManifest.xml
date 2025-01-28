@@ -2,9 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,7 +13,7 @@
         android:theme="@style/Theme.Carpool"
         tools:targetApi="31" >
         <activity
-            android:name=".ui.login.AuthActivity"
+            android:name=".presentation.screens.chat.ChatActivity"
             android:exported="false"
             android:label="@string/title_activity_auth" />
         <activity
@@ -34,7 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.screens.Login.SignWithGoogle" />
     </application>
 
 </manifest>
