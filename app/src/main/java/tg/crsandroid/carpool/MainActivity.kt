@@ -9,9 +9,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -23,6 +27,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
+import tg.crsandroid.carpool.presentation.screens.Map.MapScreen
 import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
 
 class MainActivity : ComponentActivity() {
@@ -36,10 +41,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         // Initialize Google Sign In
-        initializeGoogleSignIn()
+//        initializeGoogleSignIn()
 
         setContent {
-            AppContent()
+//            AppContent()
+            MapScreen(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            )
         }
     }
 
@@ -58,7 +68,7 @@ class MainActivity : ComponentActivity() {
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 handleSignInResult(context, task)
             } else {
@@ -81,7 +91,7 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun startGoogleSignIn(launcher: androidx.activity.result.ActivityResultLauncher<Intent>) {
+    private fun startGoogleSignIn(launcher: ActivityResultLauncher<Intent>) {
         val signInIntent = googleSignInClient.signInIntent
         launcher.launch(signInIntent)
     }
