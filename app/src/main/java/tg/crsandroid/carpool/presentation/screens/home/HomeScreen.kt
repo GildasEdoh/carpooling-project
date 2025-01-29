@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,10 +69,15 @@ fun HomeScreen() {
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 80.dp) // Ajoute de l’espace
                 .zIndex(1f)
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { }
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { }
         ) {
-            RideOptionsCard()
+            RideOptionsCardPassenger()
         }
+
+
 
         // Bottom Navigation Bar
         Box(
@@ -78,7 +85,10 @@ fun HomeScreen() {
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .zIndex(2f)
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { }
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { }
         ) {
             BottomNavigationBar()
         }
@@ -195,15 +205,21 @@ fun NavigationItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RideOptionsCard() {
+fun RideOptionsCardPassenger() {
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    var depart by remember { mutableStateOf("") }
+    var arrivee by remember { mutableStateOf("") }
+    var heureDepart by remember { mutableStateOf("") }
+    var heureArrivee by remember { mutableStateOf("") }
+    var nbrSeats by remember { mutableStateOf("") }
+
     Box(
-//        shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.35f)
+            .fillMaxHeight(0.6f)
             .zIndex(100f)
             .padding(16.dp)
-            .background(Color(0x00F1F2F5)),
+            .background(Color(0x00F1F2F5))
     ) {
         Column(
             modifier = Modifier
@@ -212,95 +228,168 @@ fun RideOptionsCard() {
                 .padding(16.dp),
             horizontalAlignment = CenterHorizontally
         ) {
-                Column(modifier = Modifier
-
-                ) {
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = { /* Handle Input */ },
-                        placeholder = { Text("Entrez le lieu de départ", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
-                        shape = RoundedCornerShape(topStart = 15.dp,  topEnd = 15.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFFF1F2F5))
-                            .height(50.dp),
-
-                        textStyle = TextStyle(
-                            fontFamily = poppinsFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp
-                        ),
-
-
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            unfocusedBorderColor = Color(0xE6C7C7CB),
-                            focusedBorderColor = Color.Transparent
-
-                        )
+            // Champs communs
+            Column(modifier = Modifier) {
+                OutlinedTextField(
+                    value = depart,
+                    onValueChange = { depart = it },
+                    placeholder = { Text("Entrez le lieu de départ", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
+                    shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFF1F2F5))
+                        .height(50.dp),
+                    textStyle = TextStyle(
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedBorderColor = Color(0xE6C7C7CB),
+                        focusedBorderColor = Color(0xFF001AB7)
                     )
+                )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = { /* Handle Input */ },
-                        placeholder = { Text("Entrez le lieu d'arrivée", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
-                        shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp, topStart = 0.dp, topEnd = 0.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFFF1F2F5))
-                            .height(50.dp),
-
-                        textStyle = TextStyle(
-                            fontFamily = poppinsFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp
-                        ),
-
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            unfocusedBorderColor = Color(0xE6C7C7CB),
-                            focusedBorderColor = Color.Transparent
-                        )
+                OutlinedTextField(
+                    value = arrivee,
+                    onValueChange = { arrivee = it },
+                    placeholder = { Text("Entrez le lieu d'arrivée", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
+                    shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFF1F2F5))
+                        .height(50.dp),
+                    textStyle = TextStyle(
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedBorderColor = Color(0xE6C7C7CB),
+                        focusedBorderColor = Color(0xFF001AB7)
                     )
-                }
+                )
+
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.spacedBy(16.dp) // Espacement ajouté ici
-            ) {
-                Button(
-                    onClick = { /* Handle Take A Ride */ },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF001AB7),
-                        contentColor = Color.White
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(4.dp),
-                    shape = RoundedCornerShape(10.dp, 0.dp, 0.dp,  10.dp)
+            // Champs supplémentaires pour l'offre de trajet
+            if (selectedIndex == 1) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    OutlinedTextField(
+                        value = heureDepart,
+                        onValueChange = { heureDepart = it },
+                        placeholder = { Text("Heure de départ", fontFamily = poppinsFontFamily) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFF1F2F5))
+                            .height(50.dp),
+                        shape = RoundedCornerShape(15.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedBorderColor = Color(0xE6C7C7CB),
+                            focusedBorderColor = Color(0xFF001AB7)
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = nbrSeats,
+                        onValueChange = { nbrSeats = it },
+                        placeholder = { Text("Nombre de places", fontFamily = poppinsFontFamily) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFF1F2F5))
+                            .height(50.dp),
+                        shape = RoundedCornerShape(15.dp),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedBorderColor = Color(0xE6C7C7CB),
+                            focusedBorderColor = Color(0xFF001AB7)
+                        )
+                    )
+
+
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+
                 ) {
-                    Text("Prendre un Trajet", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily)
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { selectedIndex = 0 },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (selectedIndex == 0) Color(0xFF001AB7) else Color.White,
+                            contentColor = if (selectedIndex == 0) Color.White else Color(0xFF001AB7)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(if (selectedIndex == 0) 4.dp else 0.dp),
+                        border = BorderStroke(if (selectedIndex == 0) 0.dp else 1.dp, Color(0xFF001AB7)),
+                        shape = RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)
+                    ) {
+                        Text("Prendre un Trajet", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily)
+                    }
+
+                    Button(
+                        onClick = { selectedIndex = 1 },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (selectedIndex == 1) Color(0xFF001AB7) else Color.White,
+                            contentColor = if (selectedIndex == 1) Color.White else Color(0xFF001AB7)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(if (selectedIndex == 1) 4.dp else 0.dp),
+                        border = BorderStroke(if (selectedIndex == 1) 0.dp else 1.dp, Color(0xFF001AB7)),
+                        shape = RoundedCornerShape(topEnd = 10.dp, bottomEnd = 10.dp)
+                    ) {
+                        Text("Offrir un Trajet", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily)
+                    }
                 }
 
-                OutlinedButton(
-                    onClick = { /* Handle Offer A Ride */ },
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .background(Color(0xFFF1F2F5))
-                        .height(48.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = Color(0xFF001AB7)
-                    ),
-                    border = BorderStroke(1.dp, Color(0xFF001AB7)),
-                    shape = RoundedCornerShape(0.dp, 10.dp, 10.dp,  0.dp)
-                ) {
-                    Text("Offrie un Trajet", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily)
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                        .zIndex(1f)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { }
+                ){
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(15.dp),
+                        onClick = { /* Handle click */ },
+                        enabled = true,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF001AB7),
+                            contentColor = Color.White
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+                        border = null,
+                        contentPadding = PaddingValues(),
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        Text("Valider", fontFamily = poppinsFontFamily, color = Color.White)
+                    }
                 }
             }
+
+            // Boutons de sélection
         }
     }
 }
