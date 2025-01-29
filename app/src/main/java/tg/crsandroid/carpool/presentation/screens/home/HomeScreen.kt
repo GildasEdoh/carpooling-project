@@ -1,5 +1,6 @@
 package tg.crsandroid.carpool.presentation.screens.home
 
+import android.print.PrintAttributes.Margins
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,43 +26,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import tg.crsandroid.carpool.presentation.screens.Map.MapScreen
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-    Scaffold(
-        bottomBar = { BottomNavigationBar() }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(Color(0xFFF8F9FA)) // Background color
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(40.dp))
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Map placeholder
-            Box(
+    Box {
+        Scaffold(
+            Modifier.background(Color.Transparent),
+            bottomBar = { BottomNavigationBar() }
+        ) { padding ->
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .weight(1f)
-                    .background(Color.LightGray)
+                    .fillMaxSize()
+                    .padding(padding),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // This could be a map composable in a real app
+                Column(
+                    modifier = Modifier
 
+                ) {
+
+                    MapScreen(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    )
+
+                    // Ride options card
+                    RideOptionsCard()
+                }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Ride options card
-            RideOptionsCard()
-
         }
     }
 }
@@ -87,7 +84,7 @@ fun BottomNavigationBar() {
             .padding(16.dp)
 
             .clip(RoundedCornerShape(24.dp))
-            .background(Color(0xFF3C52C5)),
+            .background(Color(0xFF001AB7)),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -154,8 +151,8 @@ fun RideOptionsCard() {
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-//        elevation = 8.dp
+            .padding(16.dp)
+            .background(Color.White),
     ) {
         Column(
             modifier = Modifier
@@ -165,66 +162,46 @@ fun RideOptionsCard() {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Point et ligne verticale
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(end = 8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Pickup Point",
-                        tint = Color(0xFF3C52C5),
-                        modifier = Modifier.size(8.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .width(1.dp)
-                            .height(32.dp)
-                            .background(Color(0xFF3C52C5))
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Drop Point",
-                        tint = Color(0xFF3C52C5),
-                        modifier = Modifier.size(8.dp)
-                    )
-                }
 
-                Column(modifier = Modifier.weight(1f)) {
+                Column(modifier = Modifier
+                    .weight(1f)
+                ) {
                     // Pickup location input
                     OutlinedTextField(
                         value = "",
                         onValueChange = { /* Handle Input */ },
                         placeholder = { Text("Enter Pickup Location") },
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        shape = RoundedCornerShape(topStart = 10.dp,  topEnd = 10.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(35.dp),
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
+                    Spacer(modifier = Modifier.width(12.dp))
                     // Drop location input
+
                     OutlinedTextField(
                         value = "",
                         onValueChange = { /* Handle Input */ },
                         placeholder = { Text("Enter Drop Location") },
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp, topStart = 0.dp, topEnd = 0.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(35.dp),
                     )
                 }
 
                 // Time Icon
-                IconButton(
-                    onClick = { /* Handle Time Click */ },
-                    modifier = Modifier.padding(start = 8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = "Set Time",
-                        tint = Color(0xFF3C52C5)
-                    )
-                }
+//                IconButton(
+//                    onClick = { /* Handle Time Click */ },
+//                    modifier = Modifier.padding(start = 8.dp)
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Default.Lock,
+//                        contentDescription = "Set Time",
+//                        tint = Color(0xFF3C52C5)
+//                    )
+//                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
