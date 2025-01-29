@@ -1,6 +1,5 @@
 package tg.crsandroid.carpool.presentation.screens.home
 
-import android.print.PrintAttributes.Margins
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,30 +10,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
-import androidx.compose.material3.AlertDialogDefaults.containerColor
-import androidx.compose.material3.ExposedDropdownMenuDefaults.textFieldColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
+import androidx.navigation.compose.rememberNavController
+import tg.crsandroid.carpool.NavigationRoute.Home.route
 import tg.crsandroid.carpool.presentation.screens.Map.MapScreen
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
@@ -90,10 +83,12 @@ fun HomeScreen() {
             BottomNavigationBar()
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun LocationInputField(hint: String) {
     var text by remember { mutableStateOf("") }
     OutlinedTextField(
@@ -107,6 +102,10 @@ fun LocationInputField(hint: String) {
 
 @Composable
 fun BottomNavigationBar() {
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    val navController = rememberNavController()
+
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,22 +127,37 @@ fun BottomNavigationBar() {
             NavigationItem(
                 icon = Icons.Filled.Home,
                 label = "Accueil",
-                isSelected = true
+                isSelected = selectedIndex == 0,
+                onClick = { selectedIndex = 0
+                    navController.navigate(route)
+                }
             )
+
             NavigationItem(
                 icon = Icons.Filled.DateRange,
-                label = "Historque",
-                isSelected = false
+                label = "Historique",
+                isSelected = selectedIndex == 1,
+                onClick = { selectedIndex = 1
+                    navController.navigate(route)
+                }
             )
+
             NavigationItem(
                 icon = Icons.Filled.Email,
                 label = "Chat",
-                isSelected = false
+                isSelected = selectedIndex == 2,
+                onClick = { selectedIndex = 2
+                    navController.navigate(route)
+                }
             )
+
             NavigationItem(
                 icon = Icons.Filled.Person,
                 label = "Profil",
-                isSelected = false
+                isSelected = selectedIndex == 3,
+                onClick = { selectedIndex = 3
+                    navController.navigate(route)
+                }
             )
         }
     }
@@ -153,11 +167,14 @@ fun BottomNavigationBar() {
 fun NavigationItem(
     icon: ImageVector,
     label: String,
-    isSelected: Boolean
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.clickable(onClick = onClick)
+
     ) {
         Icon(
             imageVector = icon,
@@ -288,10 +305,9 @@ fun RideOptionsCard() {
     }
 }
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
     HomeScreen()
 }
+
