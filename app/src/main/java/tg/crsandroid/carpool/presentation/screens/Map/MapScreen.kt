@@ -20,6 +20,8 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -32,7 +34,15 @@ object Constants {
 fun MapScreen(modifier: Modifier = Modifier, defaultLocation: LatLng = LatLng(48.856600, 2.352200)) { // Default to Paris, France
     val context = LocalContext.current
     val activity = context as? Activity
+    val properties by remember {
+        mutableStateOf(
+            MapProperties(
+                mapType = MapType.TERRAIN // Standard, SATELLITE, TERRAIN, HYBRID
+            )
+        )
+    }
     requireNotNull(activity) { "MapScreen must be hosted in an Activity" }
+
 
     var userLocation by remember { mutableStateOf<LatLng?>(null) }
     val cameraPositionState = rememberCameraPositionState {
@@ -66,7 +76,9 @@ fun MapScreen(modifier: Modifier = Modifier, defaultLocation: LatLng = LatLng(48
     }
 
     GoogleMap(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize(),
+        properties = properties,
         cameraPositionState = cameraPositionState,
         onMyLocationButtonClick = {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||

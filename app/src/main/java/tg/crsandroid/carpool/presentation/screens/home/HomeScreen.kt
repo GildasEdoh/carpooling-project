@@ -3,6 +3,8 @@ package tg.crsandroid.carpool.presentation.screens.home
 import android.print.PrintAttributes.Margins
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -15,49 +17,77 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
 import androidx.compose.material3.AlertDialogDefaults.containerColor
+import androidx.compose.material3.ExposedDropdownMenuDefaults.textFieldColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
 import tg.crsandroid.carpool.presentation.screens.Map.MapScreen
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-    Box {
-        Scaffold(
-            Modifier.background(Color.Transparent),
-            bottomBar = { BottomNavigationBar() }
-        ) { padding ->
-            Column(
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Map interactive en arrière-plan
+        MapScreen(
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+                .padding(top = 45.dp)
+                .zIndex(1f)
+
+        ){
+            Text(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Column(
-                    modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                textAlign = TextAlign.Center,
+                text = "Carpool",
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 40.sp,
+                color = Color(0xFF1A33CE),
+           )
+        }
 
-                ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 80.dp) // Ajoute de l’espace
+                .zIndex(1f)
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { }
+        ) {
+            RideOptionsCard()
+        }
 
-                    MapScreen(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    )
-
-                    // Ride options card
-                    RideOptionsCard()
-                }
-            }
+        // Bottom Navigation Bar
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .zIndex(2f)
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { }
+        ) {
+            BottomNavigationBar()
         }
     }
 }
@@ -82,6 +112,7 @@ fun BottomNavigationBar() {
             .fillMaxWidth()
 //            .height(72.dp)
             .padding(16.dp)
+            .zIndex(100f)
 
             .clip(RoundedCornerShape(24.dp))
             .background(Color(0xFF001AB7)),
@@ -96,12 +127,12 @@ fun BottomNavigationBar() {
         ) {
             NavigationItem(
                 icon = Icons.Filled.Home,
-                label = "Home",
+                label = "Accueil",
                 isSelected = true
             )
             NavigationItem(
                 icon = Icons.Filled.DateRange,
-                label = "History",
+                label = "Historque",
                 isSelected = false
             )
             NavigationItem(
@@ -111,7 +142,7 @@ fun BottomNavigationBar() {
             )
             NavigationItem(
                 icon = Icons.Filled.Person,
-                label = "Profile",
+                label = "Profil",
                 isSelected = false
             )
         }
@@ -125,7 +156,7 @@ fun NavigationItem(
     isSelected: Boolean
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
@@ -145,93 +176,112 @@ fun NavigationItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RideOptionsCard() {
-    Card(
-        shape = RoundedCornerShape(16.dp),
+    Box(
+//        shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
+            .fillMaxHeight(0.35f)
+            .zIndex(100f)
             .padding(16.dp)
-            .background(Color.White),
+            .background(Color(0x00F1F2F5)),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .fillMaxHeight()
+                .padding(16.dp),
+            horizontalAlignment = CenterHorizontally
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
                 Column(modifier = Modifier
-                    .weight(1f)
+
                 ) {
-                    // Pickup location input
                     OutlinedTextField(
                         value = "",
                         onValueChange = { /* Handle Input */ },
-                        placeholder = { Text("Enter Pickup Location") },
-                        shape = RoundedCornerShape(topStart = 10.dp,  topEnd = 10.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
+                        placeholder = { Text("Entrez le lieu de départ", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
+                        shape = RoundedCornerShape(topStart = 15.dp,  topEnd = 15.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(35.dp),
+                            .background(Color(0xFFF1F2F5))
+                            .height(50.dp),
+
+                        textStyle = TextStyle(
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp
+                        ),
+
+
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedBorderColor = Color(0xE6C7C7CB),
+                            focusedBorderColor = Color.Transparent
+
+                        )
                     )
 
-                    Spacer(modifier = Modifier.width(12.dp))
-                    // Drop location input
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     OutlinedTextField(
                         value = "",
                         onValueChange = { /* Handle Input */ },
-                        placeholder = { Text("Enter Drop Location") },
-                        shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp, topStart = 0.dp, topEnd = 0.dp),
+                        placeholder = { Text("Entrez le lieu d'arrivée", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
+                        shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp, topStart = 0.dp, topEnd = 0.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(35.dp),
+                            .background(Color(0xFFF1F2F5))
+                            .height(50.dp),
+
+                        textStyle = TextStyle(
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp
+                        ),
+
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedBorderColor = Color(0xE6C7C7CB),
+                            focusedBorderColor = Color.Transparent
+                        )
                     )
                 }
-
-                // Time Icon
-//                IconButton(
-//                    onClick = { /* Handle Time Click */ },
-//                    modifier = Modifier.padding(start = 8.dp)
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Lock,
-//                        contentDescription = "Set Time",
-//                        tint = Color(0xFF3C52C5)
-//                    )
-//                }
-            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+//                horizontalArrangement = Arrangement.spacedBy(16.dp) // Espacement ajouté ici
             ) {
                 Button(
                     onClick = { /* Handle Take A Ride */ },
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3C52C5)),
-                    elevation = ButtonDefaults.buttonElevation(8.dp)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF001AB7),
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(4.dp),
+                    shape = RoundedCornerShape(10.dp, 0.dp, 0.dp,  10.dp)
                 ) {
-                    Text("Take A Ride", color = Color.White)
+                    Text("Prendre un Trajet", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily)
                 }
-
-                Spacer(modifier = Modifier.width(8.dp))
 
                 OutlinedButton(
                     onClick = { /* Handle Offer A Ride */ },
                     modifier = Modifier
                         .weight(1f)
+                        .background(Color(0xFFF1F2F5))
                         .height(48.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF3C52C5)),
-                    border = BorderStroke(1.dp, Color(0xFF3C52C5))
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = Color(0xFF001AB7)
+                    ),
+                    border = BorderStroke(1.dp, Color(0xFF001AB7)),
+                    shape = RoundedCornerShape(0.dp, 10.dp, 10.dp,  0.dp)
                 ) {
-                    Text("Offer A Ride")
+                    Text("Offrie un Trajet", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily)
                 }
             }
         }
