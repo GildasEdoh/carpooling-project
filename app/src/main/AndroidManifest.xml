@@ -25,6 +25,10 @@
             android:exported="false"
             android:theme="@style/Theme.App" />
         <activity
+            android:name=".DashActivity"
+            android:exported="false"
+            android:theme="@style/Theme.App" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

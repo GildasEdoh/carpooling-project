@@ -10,7 +10,7 @@ data class Trajet(
     var nbrSeats: String = "",
     val idConducteur: String = "",
     var reservations: List<String> = mutableListOf(),
-    val prix: String,
+    val prix: String = "",
 //    val passagers: Any
 ) {
     companion object {

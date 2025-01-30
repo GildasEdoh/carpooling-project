@@ -6,7 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
-class UserRepo : BaseRepository<Utilisateur>("users-test", Utilisateur::class.java) {
+class UserRepo : BaseRepository<Utilisateur>("users", Utilisateur::class.java) {
     private val firestore: FirebaseFirestore = Firebase.firestore
 
     suspend fun addUser(user: Utilisateur): Boolean {

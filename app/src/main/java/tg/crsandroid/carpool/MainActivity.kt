@@ -3,6 +3,7 @@ package tg.crsandroid.carpool
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -10,34 +11,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.example.carpooling_project.model.Utilisateur
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
-import tg.crsandroid.carpool.presentation.screens.Map.MapScreen
 import tg.crsandroid.carpool.presentation.screens.home.HomeScreen
-import tg.crsandroid.carpool.presentation.screens.home.HomeScreenPreview
 import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
-import kotlin.properties.Delegates
+import tg.crsandroid.carpool.service.FirestoreService
+import tg.crsandroid.carpool.service.FirestoreService.scope
 
 class MainActivity : ComponentActivity() {
     // Firebase and Authentication properties
@@ -51,15 +44,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         // Initialize Google Sign In
-//        initializeGoogleSignIn()
+        initializeGoogleSignIn()
 
         setContent {
-//            AppContent()
+            AppContent()
             // Initialiser FusedLocationProviderClient
             // Démarrer les mises à jour de localisation
-
-            HomeScreen()
-
+            // HomeScreen()
 //            startLocationUpdates()
 //            MapScreen(
 //                modifier = Modifier
@@ -124,7 +115,8 @@ class MainActivity : ComponentActivity() {
                         // Save user data if needed
                         saveUserToFirestore(it)
                         // Navigate to RideList screen
-                        navigateToRideList()
+                        // navigateToRideList()
+                        startDashBorad()
                         showToast(context, "Connexion réussie : ${it.displayName}")
                     } else {
                         showToast(context, "Erreur : $error")
@@ -137,20 +129,18 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun saveUserToFirestore(account: GoogleSignInAccount) {
-        val userData = hashMapOf(
-            "email" to account.email,
-            "displayName" to account.displayName,
-            "photoUrl" to (account.photoUrl?.toString() ?: ""),
-            "lastLogin" to System.currentTimeMillis()
+        val userData = Utilisateur(
+            account.id,
+            account.givenName,
+            account.familyName,
+            account.email
         )
-
-        account.id?.let { userId ->
-            db.collection("users")
-                .document(userId)
-                .set(userData)
-                .addOnFailureListener { e ->
-                    println("Error saving user data: ${e.message}")
-                }
+        save(userData) { isSuccess ->
+            if (isSuccess) {
+                Log.i("Main", "Utilisateur ajouté")
+            } else {
+                Log.i("Main", "Utilisateur  non ajouté")
+            }
         }
     }
 
@@ -164,6 +154,25 @@ class MainActivity : ComponentActivity() {
 
     private fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+    private fun startDashBorad() {
+        Intent(this, DashActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(this)
+            finish() //
+        }
+    }
+    private fun save(user:Utilisateur, callback: (Boolean) -> Unit) {
+        launchSuspendFunction(scope, callback) {
+            FirestoreService.usersRepo.addUser(user)
+        }
+    }
+
+    fun launchSuspendFunction(scope: CoroutineScope, callback: (Boolean) -> Unit, suspendFunction: suspend () -> Boolean) {
+        scope.launch {
+            val result = suspendFunction()
+            callback(result)
+        }
     }
 }
 
