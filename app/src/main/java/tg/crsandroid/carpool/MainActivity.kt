@@ -116,7 +116,7 @@ class MainActivity : ComponentActivity() {
                         saveUserToFirestore(it)
                         // Navigate to RideList screen
                         // navigateToRideList()
-                        startDashBorad()
+                        startDashBoard()
                         showToast(context, "Connexion réussie : ${it.displayName}")
                     } else {
                         showToast(context, "Erreur : $error")
@@ -135,6 +135,7 @@ class MainActivity : ComponentActivity() {
             account.familyName,
             account.email
         )
+        FirestoreService.currentUser = userData
         save(userData) { isSuccess ->
             if (isSuccess) {
                 Log.i("Main", "Utilisateur ajouté")
@@ -155,7 +156,7 @@ class MainActivity : ComponentActivity() {
     private fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
-    private fun startDashBorad() {
+    private fun startDashBoard() {
         Intent(this, DashActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(this)

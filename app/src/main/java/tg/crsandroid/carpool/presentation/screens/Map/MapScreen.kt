@@ -25,6 +25,7 @@ import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import tg.crsandroid.carpool.service.userDetails
 
 object Constants {
     const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -89,6 +90,9 @@ fun MapScreen(modifier: Modifier = Modifier, defaultLocation: LatLng = LatLng(48
                 }
             }
             true
+        },
+        onMapLongClick = { latLng ->
+            userDetails.userDestination = latLng
         }
     ) {
         userLocation?.let { location ->
