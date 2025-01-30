@@ -42,6 +42,7 @@ import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
+// Composant Home principal
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
