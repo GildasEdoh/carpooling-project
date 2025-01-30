@@ -1,6 +1,7 @@
 package tg.crsandroid.carpool.presentation.screens.home
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,10 +38,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import tg.crsandroid.carpool.DashActivity
 import tg.crsandroid.carpool.R
+import tg.crsandroid.carpool.model.Reservation
 import tg.crsandroid.carpool.model.Trajet
+import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
+import java.time.LocalDate
+
+// Contient la logique pour enregistrer les donnes dans la base de donnee
 
 class Dialog {
 }
@@ -101,7 +109,7 @@ private fun ConfirmationDialog(
                     onClick = onConfirm,
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = Color(0xFF001AB7),
                         contentColor = Color.White
                     )
                 ) {
@@ -150,6 +158,9 @@ fun createTrajet(trajet: Trajet, callback: (Boolean) -> Unit) {
 }
 
 // Passer a l'affichage de la liste des trajets
-fun startReservation() {
-    
+@Composable
+fun DisplayRideList() {
+    val context = LocalContext.current
+    val intent = Intent(context, RideListActivity::class.java)
+    context.startActivity(intent)
 }
