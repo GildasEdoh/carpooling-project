@@ -39,11 +39,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import tg.crsandroid.carpool.model.Trajet
+import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 class FieldsView {
 }
-
+// Contient les champs et les bouttons  du home
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,11 +59,12 @@ fun RideOptionsCardPassenger() {
     var showDialog by remember { mutableStateOf(false) } // Contrôle du dialog
     var trajetToConfirm: Trajet? by remember { mutableStateOf(null) }
     val context = LocalContext.current
+    var startRides by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.7f)
+            .fillMaxHeight(0.6f)
             .zIndex(100f)
             .padding(8.dp)
             .background(Color(0x00F1F2F5))
@@ -74,52 +76,29 @@ fun RideOptionsCardPassenger() {
                 .padding(16.dp),
             horizontalAlignment = CenterHorizontally
         ) {
-            // Champs communs
+            if (selectedIndex == 0) {
             Column(modifier = Modifier) {
-                OutlinedTextField(
-                    value = depart,
-                    onValueChange = { depart = it },
-                    placeholder = { Text("Entrez le lieu de départ", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
-                    shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFFF1F2F5))
-                        .height(50.dp),
-                    textStyle = TextStyle(
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp
-                    ),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedBorderColor = Color(0xE6C7C7CB),
-                        focusedBorderColor = Color(0xFF001AB7)
+                    OutlinedTextField(
+                        value = depart,
+                        onValueChange = { depart = it },
+                        placeholder = { Text("Entrez la destination", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
+                        shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFF1F2F5))
+                            .height(50.dp),
+                        textStyle = TextStyle(
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp
+                        ),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedBorderColor = Color(0xE6C7C7CB),
+                            focusedBorderColor = Color(0xFF001AB7)
+                        )
                     )
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = arrivee,
-                    onValueChange = { arrivee = it },
-                    placeholder = { Text("Entrez le lieu d'arrivée", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
-                    shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFFF1F2F5))
-                        .height(50.dp),
-                    textStyle = TextStyle(
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp
-                    ),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedBorderColor = Color(0xE6C7C7CB),
-                        focusedBorderColor = Color(0xFF001AB7)
-                    )
-                )
-
+                }
             }
-
             Spacer(modifier = Modifier.height(8.dp))
 
             // Champs supplémentaires pour l'offre de trajet
@@ -127,14 +106,19 @@ fun RideOptionsCardPassenger() {
             if (selectedIndex == 1) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
-                        value = heureDepart,
-                        onValueChange = { heureDepart = it },
-                        placeholder = { Text("Heure de départ", fontFamily = poppinsFontFamily) },
+                        value = depart,
+                        onValueChange = { depart = it },
+                        placeholder = { Text("Entrez le lieu de depart", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
+                        shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color(0xFFF1F2F5))
                             .height(50.dp),
-                        shape = RoundedCornerShape(15.dp),
+                        textStyle = TextStyle(
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp
+                        ),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             unfocusedBorderColor = Color(0xE6C7C7CB),
                             focusedBorderColor = Color(0xFF001AB7)
@@ -144,6 +128,29 @@ fun RideOptionsCardPassenger() {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(
+                        value = arrivee,
+                        onValueChange = { arrivee = it },
+                        placeholder = { Text("Entrez le lieu d'arrivée", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
+                        shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFF1F2F5))
+                            .height(50.dp),
+                        textStyle = TextStyle(
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp
+                        ),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedBorderColor = Color(0xE6C7C7CB),
+                            focusedBorderColor = Color(0xFF001AB7)
+                        )
+                    )
+
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField (
                         value = nbrSeats,
                         onValueChange = { nbrSeats = it },
                         placeholder = { Text("Nombre de places", fontFamily = poppinsFontFamily) },
@@ -175,8 +182,6 @@ fun RideOptionsCardPassenger() {
                             focusedBorderColor = Color(0xFF001AB7)
                         )
                     )
-
-
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -249,12 +254,14 @@ fun RideOptionsCardPassenger() {
                                     heureArrivee =heureArrivee,
                                     duree = "",
                                     nbrSeats = nbrSeats,
-                                    idConducteur = "",
-                                    prix = 500.toString()
+                                    idConducteur = FirestoreService.currentUser.id!!,
+                                    prix = 500.toString(),
                                 )
+                                FirestoreService.currentUser.type = "Conducteur"
                                 showDialog = true
                             } else { // Prise de trajet par l'utilisateur
-
+                                startRides = true
+                                FirestoreService.currentUser.type = "Passager"
                             }
                         },
                         enabled = true,
@@ -274,6 +281,12 @@ fun RideOptionsCardPassenger() {
                     Log.i("MMMMMMM", "Showpanel ${showDialog}, ${trajetToConfirm}")
                     if (showDialog && trajetToConfirm != null) {
                         showDialogPanel(trajetToConfirm!!, context)
+                        showDialog = false
+                    }
+                    // Affiche la liste des trajets
+                    if (startRides) {
+                        DisplayRideList()
+                        startRides = false
                     }
                 }
             }

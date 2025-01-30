@@ -1,5 +1,7 @@
 package com.example.carpooling_project.model
 
+import tg.crsandroid.carpool.model.Trajet
+
 data class Utilisateur(
     var id : String? = "",
     var nom : String? = "",
@@ -10,7 +12,8 @@ data class Utilisateur(
     var reservations: List<String> = mutableListOf(),
     var type: String? = "",
     var numPhone: String? = "",
-    var motDePasse: String? = ""
+    var motDePasse: String? = "",
+    var trajets: List<Trajet> = mutableListOf()
 ) {
     companion object {
         const val COLLECTIONS_USERS = "users"

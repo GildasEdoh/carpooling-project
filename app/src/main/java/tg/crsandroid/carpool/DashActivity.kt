@@ -69,6 +69,9 @@ class DashActivity : ComponentActivity() {
                 // ProfileScreen(navController)
                 Log.i("Dash", "Not initilized")
             }
+            composable("listeTrajets") {
+                Log.i("Dash", "Not initilized")
+            }
         }
     }
 }
