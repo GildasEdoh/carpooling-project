@@ -1,14 +1,16 @@
 package com.example.carpooling_project.model
 
 data class Utilisateur(
-  var id : String? = "",
-  var nom : String? = "",
-  var prenom : String? = "",
-  var email: String? = "",
+    var id : String? = "",
+    var nom : String? = "",
+    var prenom : String? = "",
+    var email: String? = "",
+    var nomUtilisateur: String? = nom + prenom,
 
-  var reservations: List<String> = mutableListOf(),
-  var type: String? = "",
-  var numPhone: String? = "",
+    var reservations: List<String> = mutableListOf(),
+    var type: String? = "",
+    var numPhone: String? = "",
+    var motDePasse: String? = ""
 ) {
     companion object {
         const val COLLECTIONS_USERS = "users"
