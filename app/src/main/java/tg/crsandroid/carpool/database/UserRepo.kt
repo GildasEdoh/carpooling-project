@@ -3,6 +3,7 @@ package tg.crsandroid.carpool.database
 import com.example.carpooling_project.model.Utilisateur
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
@@ -18,6 +19,22 @@ class UserRepo : BaseRepository<Utilisateur>("users", Utilisateur::class.java) {
             true
         } catch (e: Exception) {
             false
+        }
+    }
+
+    fun getNearbyUser() {
+
+    }
+    suspend fun getAllConductors(): List<Utilisateur> {
+        return try {
+            val querySnapshot: QuerySnapshot = firestore.collection(collectionName)
+                .whereEqualTo("type", "Conducteur") // Filtre pour les utilisateurs de type conducteur
+                .get()
+                .await()
+
+            querySnapshot.documents.mapNotNull { it.toObject(Utilisateur::class.java) }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }

@@ -78,6 +78,7 @@ class MainActivity : ComponentActivity() {
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { result ->
+            Log.i("MAIN", "result code ${result.resultCode}" +"RESULT_OK" + RESULT_OK)
             if (result.resultCode == RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 handleSignInResult(context, task)
