@@ -5,29 +5,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +26,6 @@ import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 class FieldsView {
 }
-// Contient les champs et les bouttons  du home
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +37,7 @@ fun RideOptionsCardPassenger() {
     var heureArrivee by remember { mutableStateOf("") }
     var nbrSeats by remember { mutableStateOf("") }
     var prix by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) } // Contrôle du dialog
+    var showDialog by remember { mutableStateOf(false) }
     var trajetToConfirm: Trajet? by remember { mutableStateOf(null) }
     val context = LocalContext.current
     var startRides by remember { mutableStateOf(false) }
@@ -64,20 +45,19 @@ fun RideOptionsCardPassenger() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.6f)
+            .wrapContentHeight()
             .zIndex(100f)
             .padding(8.dp)
-            .background(Color(0x00F1F2F5))
+            .background(Color(0x00F1F2F5)),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
                 .padding(16.dp),
             horizontalAlignment = CenterHorizontally
         ) {
             if (selectedIndex == 0) {
-            Column(modifier = Modifier) {
+                Column(modifier = Modifier) {
                     OutlinedTextField(
                         value = depart,
                         onValueChange = { depart = it },
@@ -94,15 +74,13 @@ fun RideOptionsCardPassenger() {
                         ),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             unfocusedBorderColor = Color(0xE6C7C7CB),
-                            focusedBorderColor = Color(0xFF001AB7)
+                            focusedBorderColor = Color(0xD03C52C5)
                         )
                     )
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Champs supplémentaires pour l'offre de trajet
-            // Creation de trajets
             if (selectedIndex == 1) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
@@ -121,7 +99,7 @@ fun RideOptionsCardPassenger() {
                         ),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             unfocusedBorderColor = Color(0xE6C7C7CB),
-                            focusedBorderColor = Color(0xFF001AB7)
+                            focusedBorderColor = Color(0xFF3C52C5)
                         )
                     )
 
@@ -143,14 +121,13 @@ fun RideOptionsCardPassenger() {
                         ),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             unfocusedBorderColor = Color(0xE6C7C7CB),
-                            focusedBorderColor = Color(0xFF001AB7)
+                            focusedBorderColor = Color(0xFF3C52C5)
                         )
                     )
 
-
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    OutlinedTextField (
+                    OutlinedTextField(
                         value = nbrSeats,
                         onValueChange = { nbrSeats = it },
                         placeholder = { Text("Nombre de places", fontFamily = poppinsFontFamily) },
@@ -162,7 +139,7 @@ fun RideOptionsCardPassenger() {
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             unfocusedBorderColor = Color(0xE6C7C7CB),
-                            focusedBorderColor = Color(0xFF001AB7)
+                            focusedBorderColor = Color(0xFF3C52C5)
                         )
                     )
 
@@ -179,30 +156,29 @@ fun RideOptionsCardPassenger() {
                         shape = RoundedCornerShape(15.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             unfocusedBorderColor = Color(0xE6C7C7CB),
-                            focusedBorderColor = Color(0xFF001AB7)
+                            focusedBorderColor = Color(0xFF3C52C5)
                         )
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-
             ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Button(
                         onClick = { selectedIndex = 0 },
                         modifier = Modifier
                             .weight(1f)
-                            .height(48.dp),
+                            .height(50.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selectedIndex == 0) Color(0xFF001AB7) else Color.White,
-                            contentColor = if (selectedIndex == 0) Color.White else Color(0xFF001AB7)
+                            containerColor = if (selectedIndex == 0) Color(0xFF3C52C5) else Color.White,
+                            contentColor = if (selectedIndex == 0) Color.White else Color(0xFF3C52C5)
                         ),
                         elevation = ButtonDefaults.buttonElevation(if (selectedIndex == 0) 4.dp else 0.dp),
-                        border = BorderStroke(if (selectedIndex == 0) 0.dp else 1.dp, Color(0xFF001AB7)),
+                        border = BorderStroke(if (selectedIndex == 0) 0.dp else 1.dp, Color(0xFF3C52C5)),
                         shape = RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)
                     ) {
                         Text("Prendre un Trajet", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily)
@@ -214,11 +190,11 @@ fun RideOptionsCardPassenger() {
                             .weight(1f)
                             .height(50.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selectedIndex == 1) Color(0xFF001AB7) else Color.White,
-                            contentColor = if (selectedIndex == 1) Color.White else Color(0xFF001AB7)
+                            containerColor = if (selectedIndex == 1) Color(0xFF3C52C5) else Color.White,
+                            contentColor = if (selectedIndex == 1) Color.White else Color(0xFF3C52C5)
                         ),
                         elevation = ButtonDefaults.buttonElevation(if (selectedIndex == 1) 4.dp else 0.dp),
-                        border = BorderStroke(if (selectedIndex == 1) 0.dp else 1.dp, Color(0xFF001AB7)),
+                        border = BorderStroke(if (selectedIndex == 1) 0.dp else 1.dp, Color(0xFF3C52C5)),
                         shape = RoundedCornerShape(topEnd = 10.dp, bottomEnd = 10.dp)
                     ) {
                         Text("Offrir un Trajet", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily)
@@ -236,22 +212,22 @@ fun RideOptionsCardPassenger() {
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) { }
-                ){
-                    // Boutton de validation
+                ) {
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),
+                        elevation = ButtonDefaults.buttonElevation(20.dp),
                         shape = RoundedCornerShape(15.dp),
                         onClick = {
                             Log.i("Home clicl", "Clic sur valider number: ${selectedIndex}")
-                            if (selectedIndex == 1) { // Creation de trajet par le conducteur
+                            if (selectedIndex == 1) {
                                 trajetToConfirm = Trajet(
                                     "1",
                                     lieuDepart = depart,
                                     lieuArrivee = arrivee,
                                     heureDepart = heureDepart,
-                                    heureArrivee =heureArrivee,
+                                    heureArrivee = heureArrivee,
                                     duree = "",
                                     nbrSeats = nbrSeats,
                                     idConducteur = FirestoreService.currentUser.id!!,
@@ -259,17 +235,16 @@ fun RideOptionsCardPassenger() {
                                 )
                                 FirestoreService.currentUser.type = "Conducteur"
                                 showDialog = true
-                            } else { // Prise de trajet par l'utilisateur
+                            } else {
                                 startRides = true
                                 FirestoreService.currentUser.type = "Passager"
                             }
                         },
                         enabled = true,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF001AB7),
+                            containerColor = Color(0xFF3C52C5),
                             contentColor = Color.White
                         ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
                         border = null,
                         contentPadding = PaddingValues(),
                         interactionSource = remember { MutableInteractionSource() }
@@ -277,20 +252,17 @@ fun RideOptionsCardPassenger() {
                         Text("Valider", fontFamily = poppinsFontFamily, color = Color.White)
                     }
 
-                    // Affichage du dialogue de confirmation
                     Log.i("MMMMMMM", "Showpanel ${showDialog}, ${trajetToConfirm}")
                     if (showDialog && trajetToConfirm != null) {
                         showDialogPanel(trajetToConfirm!!, context)
                         showDialog = false
                     }
-                    // Affiche la liste des trajets
                     if (startRides) {
                         DisplayRideList()
                         startRides = false
                     }
                 }
             }
-            // Boutons de sélection
         }
     }
 }

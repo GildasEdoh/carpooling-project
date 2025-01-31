@@ -50,7 +50,9 @@ class MainActivity : ComponentActivity() {
             AppContent()
             // Initialiser FusedLocationProviderClient
             // Démarrer les mises à jour de localisation
-            // HomeScreen()
+//             HomeScreen(
+//                 navController = { /*TODO()*/ }
+//             )
 //            startLocationUpdates()
 //            MapScreen(
 //                modifier = Modifier
@@ -59,6 +61,7 @@ class MainActivity : ComponentActivity() {
 ////                longitude = longitude,
 ////                latitude = latitude,
 //            )
+            startDashBoard()
         }
     }
 
@@ -120,6 +123,8 @@ class MainActivity : ComponentActivity() {
                         startDashBoard()
                         showToast(context, "Connexion réussie : ${it.displayName}")
                     } else {
+                        startDashBoard()
+
                         showToast(context, "Erreur : $error")
                     }
                 }

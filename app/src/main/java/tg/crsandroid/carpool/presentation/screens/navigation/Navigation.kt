@@ -33,8 +33,8 @@ fun BottomNavigationBar(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(Color(0xFF001AB7)),
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFF3C52C5)),
         contentAlignment = Alignment.Center
     ) {
         Row(

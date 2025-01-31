@@ -41,7 +41,7 @@ class RideListActivity : ComponentActivity() {
             MaterialTheme(
                 colorScheme = lightColorScheme(
                     primary = Color(0xFF3C52C5),
-                    secondary = Color(0xFF2F42AF),
+                    secondary = Color(0xFF3C52C5),
                     surface = Color(0xFFFFFFFF)
                 )
             ) {
@@ -80,7 +80,7 @@ fun RideListScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Retour",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                     }
                 },
@@ -218,7 +218,7 @@ private fun TrajetCard(
                     Text(
                         text = "Prix par place",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
                     )
                     Text(
                         text = "${trajet.prix} FCFA",
