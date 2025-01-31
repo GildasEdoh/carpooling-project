@@ -4,9 +4,11 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-open class BaseRepository <T: Any> (val collectionName: String, private val modelClass: Class<T>) {
+open class BaseRepository <T: Any> (val collectionName: String, val modelClass: Class<T>) {
     private val firestore: FirebaseFirestore = Firebase.firestore
 
     suspend fun addDocument(document : T): Boolean {
@@ -67,6 +69,18 @@ open class BaseRepository <T: Any> (val collectionName: String, private val mode
             documentSnapshot.toObject(modelClass)
         } catch (e: Exception) {
             null
+        }
+    }
+    fun addDocumentFromNonCoroutine(document: T, scope: CoroutineScope, callback: (Boolean) -> Unit) {
+        scope.launch {
+            val isSuccess = addDocument(document)
+            callback(isSuccess)
+        }
+    }
+    fun launchSuspendFunction(scope: CoroutineScope, callback: (Boolean) -> Unit, suspendFunction: suspend () -> Boolean) {
+        scope.launch {
+            val result = suspendFunction()
+            callback(result)
         }
     }
 

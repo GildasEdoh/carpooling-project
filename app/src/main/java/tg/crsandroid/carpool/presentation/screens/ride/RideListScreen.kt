@@ -1,10 +1,12 @@
 package tg.crsandroid.carpool.presentation.screens.ride
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,15 +20,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import com.example.carpooling_project.model.Utilisateur
 import tg.crsandroid.carpool.R
+import tg.crsandroid.carpool.model.Reservation
 import tg.crsandroid.carpool.model.Trajet
+import tg.crsandroid.carpool.service.FirestoreService
+import java.time.LocalDate
+
 
 class RideListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +41,7 @@ class RideListActivity : ComponentActivity() {
             MaterialTheme(
                 colorScheme = lightColorScheme(
                     primary = Color(0xFF3C52C5),
-                    secondary = Color(0xFF2F42AF),
+                    secondary = Color(0xFF3C52C5),
                     surface = Color(0xFFFFFFFF)
                 )
             ) {
@@ -55,6 +61,7 @@ fun RideListScreen(
 ) {
     val trajets = remember { generateSampleTrajets() }
     var selectedTrajet by remember { mutableStateOf<Trajet?>(null) }
+    val conducteurs = emptyList<Utilisateur>()
 
     Scaffold(
         topBar = {
@@ -73,7 +80,7 @@ fun RideListScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Retour",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                     }
                 },
@@ -172,6 +179,11 @@ private fun TrajetCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 InfoItem(
+                    icon = Icons.Default.AccountCircle,
+                    title = "Conducteur",
+                    value = "EDOH"
+                )
+                InfoItem(
                     icon = Icons.Default.DateRange,
                     title = "Départ",
                     value = trajet.heureDepart
@@ -186,6 +198,14 @@ private fun TrajetCard(
                     title = "Places",
                     value = trajet.nbrSeats
                 )
+                InfoItem(
+                    icon = Icons.Default.Info,
+                    title = "Infos",
+                    value = "",
+                    onClick = {
+                        Log.i("RIDELIST", "Liste ride")
+                    }
+                )
             }
 
             // Price & Button
@@ -198,7 +218,7 @@ private fun TrajetCard(
                     Text(
                         text = "Prix par place",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
                     )
                     Text(
                         text = "${trajet.prix} FCFA",
@@ -237,7 +257,8 @@ private fun TrajetCard(
 private fun InfoItem(
     icon: ImageVector,
     title: String,
-    value: String
+    value: String,
+    onClick: () -> Unit = {}
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
@@ -245,6 +266,7 @@ private fun InfoItem(
             contentDescription = null,
             tint = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.size(24.dp)
+                .clickable { onClick() } // Ajout de l'écouteur de clic
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -322,7 +344,11 @@ private fun ConfirmationDialog(
 }
 
 private fun reserverTrajet(trajet: Trajet) {
-    // Réserver le trajet
+    val reservation = Reservation(
+        idConducteur = FirestoreService.currentUser.id!!,
+        date = LocalDate.now().toString(),
+        idTrajet = trajet.id
+    )
 }
 
 private fun generateSampleTrajets(): List<Trajet> {
@@ -334,7 +360,8 @@ private fun generateSampleTrajets(): List<Trajet> {
             heureArrivee = "12:00",
             duree = "4h",
             prix = 5000.toString(),
-            nbrSeats = 3.toString()
+            nbrSeats = 3.toString(),
+            idConducteur = "G"
         ),
         Trajet(
             lieuDepart = "Lomé",
@@ -352,7 +379,8 @@ private fun generateSampleTrajets(): List<Trajet> {
             heureArrivee = "11:30",
             duree = "1h30",
             prix = 2000.toString(),
-            nbrSeats = 1.toString()
+            nbrSeats = 1.toString(),
+            idConducteur = "G"
         )
     )
 }

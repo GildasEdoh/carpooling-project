@@ -1,7 +1,8 @@
 package tg.crsandroid.carpool
 
 sealed class NavigationRoute(val route: String) {
-    object Login : NavigationRoute("login")
-    object Signup : NavigationRoute("signup")
-    object Home : NavigationRoute("home")
+    object Home : NavigationRoute("Home")
+    object History : NavigationRoute("History")
+    object Profile : NavigationRoute("Profile")
+    object Chat : NavigationRoute("Chat")
 }

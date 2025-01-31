@@ -88,7 +88,9 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
                 ) {
                     // Bouton Login
                     Button(
-                        onClick = { TODO() },
+                        onClick = { println(
+                            "Hello"
+                        ) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF001F7F)),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
@@ -107,7 +109,7 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
 
                     // Bouton Sign Up
                     Button(
-                        onClick = { TODO() },
+                        onClick = { "Hello"},
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF001F7F)),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
