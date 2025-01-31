@@ -33,7 +33,7 @@ object Constants {
 }
 
 @Composable
-fun MapScreen(modifier: Modifier = Modifier, defaultLocation: LatLng = LatLng(48.856600, 2.352200)) { // Default to Paris, France
+fun MapScreen(modifier: Modifier = Modifier, defaultLocation: LatLng = LatLng(6.1725, 1.2314)) { // Default to Paris, France
     val context = LocalContext.current
     val activity = context as? Activity
     val properties by remember {
@@ -104,6 +104,7 @@ fun MapScreen(modifier: Modifier = Modifier, defaultLocation: LatLng = LatLng(48
                 state = MarkerState(location),
                 title = "Votre position"
             )
+            Log.i("MAPSCREEN", "User location ${userLocation}")
         }
         Log.i("MAPSCREEN", "Map clicked ${userDestination}")
         userDestination?.let { destination ->
