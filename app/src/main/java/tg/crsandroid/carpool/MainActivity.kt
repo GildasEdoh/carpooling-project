@@ -61,7 +61,6 @@ class MainActivity : ComponentActivity() {
 ////                longitude = longitude,
 ////                latitude = latitude,
 //            )
-            startDashBoard()
         }
     }
 
