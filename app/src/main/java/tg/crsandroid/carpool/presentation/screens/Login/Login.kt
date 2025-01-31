@@ -18,6 +18,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +36,8 @@ import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 @Composable
 fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit, onGoogleLoginClick: () -> Unit) {
+    var login by remember { mutableIntStateOf(0) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -64,22 +70,9 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
                 verticalArrangement = Arrangement.spacedBy(10.dp) // Moved here
             ) {
                 // Bouton de connexion avec Google
-                Button(
-                    onClick = onGoogleLoginClick,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEFEFEF)),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp) // Hauteur du bouton
-                ) {
-                    Text(
-                        text = "Login with Google",
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp,
-                        fontFamily = poppinsFontFamily,
-                        color = Color.Gray
-                    )
-                }
+                LoginWithGoogle(
+                    onGoogleLoginClick = onGoogleLoginClick
+                )
 
                 // Row pour Login et Sign Up sur la même ligne
                 Row(
@@ -88,9 +81,9 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
                 ) {
                     // Bouton Login
                     Button(
-                        onClick = { println(
-                            "Hello"
-                        ) },
+                        onClick = {
+                            login = 1
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF001F7F)),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
@@ -109,7 +102,10 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
 
                     // Bouton Sign Up
                     Button(
-                        onClick = { "Hello"},
+                        onClick = {
+                            //
+                            login = 2
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF001F7F)),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
@@ -127,6 +123,32 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
                 }
             }
         }
+    }
+    if (login == 1) { // Nav signIn
+        AppNavigation(login)
+    }
+    else if (login == 2) { // Nav to SignUp
+        AppNavigation(login)
+    }
+}
+
+@Composable
+fun LoginWithGoogle(onGoogleLoginClick: () -> Unit) {
+    Button(
+        onClick = onGoogleLoginClick,
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEFEFEF)),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp) // Hauteur du bouton
+    ) {
+        Text(
+            text = "Login with Google",
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+            fontFamily = poppinsFontFamily,
+            color = Color.Gray
+        )
     }
 }
 

@@ -1,11 +1,10 @@
+package tg.crsandroid.carpool.presentation.screens.Login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,23 +17,22 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import tg.crsandroid.carpool.R
 
+
 @Composable
-fun SignUpScreen(onNavigateToSignIn: () -> Unit) {
+fun SignInScreen(onNavigateToSignUp: () -> Unit={}) {
     // États pour les champs de texte
     var username by remember { mutableStateOf("") }
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     // État pour afficher/masquer le mot de passe
-    var isPasswordVisible by remember { mutableStateOf(false) }
+    var isPasswordVisible by remember{ mutableStateOf(false)}
 
     Column(
         modifier = Modifier
@@ -45,62 +43,33 @@ fun SignUpScreen(onNavigateToSignIn: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Sign up",
-            color = Color.Blue,
+            text="login",
+            color=Color.Blue,
             fontSize = 45.sp,
             fontWeight = FontWeight.Bold
         )
-
         // Image en haut
         Image(
-            painter = painterResource(id = R.drawable.login),
-            contentDescription = "image signup",
+            painter = painterResource(id = R.drawable.signup),
+            contentDescription = "image login",
             modifier = Modifier
                 .size(240.dp)
                 .padding(bottom = 16.dp)
         )
 
-        // Champ Prénom
+        // Champ Nom d'utilisateur
         OutlinedTextField(
-            value = firstName,
-            onValueChange = { firstName = it },
-            label = { Text("Prénom") },
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Nom d'utilisateur") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = "Prénom")
+            leadingIcon ={
+                Icon( Icons.Default.Person,contentDescription ="utilisateur")
             }
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Champ Nom
-        OutlinedTextField(
-            value = lastName,
-            onValueChange = { lastName = it },
-            label = { Text("Nom") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = "Nom")
-            }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Champ E-mail
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Adresse e-mail") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            leadingIcon = {
-                Icon(Icons.Filled.Email, contentDescription = "E-mail")
-            }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Champ Mot de passe avec icônes
         OutlinedTextField(
@@ -111,7 +80,9 @@ fun SignUpScreen(onNavigateToSignIn: () -> Unit) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             leadingIcon = {
-                Icon(Icons.Filled.Lock, contentDescription = "Mot de passe")
+                Icon( Icons.Filled.Lock,
+                    contentDescription = "Mot de passe"
+                )
             },
             trailingIcon = {
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
@@ -122,32 +93,65 @@ fun SignUpScreen(onNavigateToSignIn: () -> Unit) {
                 }
             }
         )
+        Spacer(modifier = Modifier.height(8.dp))
 
+        // Lien "Mot de passe oublié ?"
+        TextButton(onClick = { /* Logique pour mot de passe oublié */ }) {
+            Text("Mot de passe oublié ?", color = Color.Blue)
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Bouton S'inscrire
+        // Bouton Se connecter
         Button(
-            onClick = { /* Logique d'inscription */ },
+            onClick = { /* Logique de connexion */ },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Blue,
                 contentColor = Color.White
             )
         ) {
-            Text("S'inscrire")
+            Text("Se connecter")
         }
-
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Lien vers la page de connexion
-        TextButton(onClick = onNavigateToSignIn) {
-            Text("Déjà inscrit ? Se connecter", color = Color.Blue)
+        // Séparateur "_or_"
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Divider(
+                modifier = Modifier.weight(1f),
+                color = Color.Gray,
+                thickness = 1.dp
+            )
+            Text(
+                text = "or",
+                modifier = Modifier.padding(horizontal = 16.dp),
+                color = Color.Gray,
+                fontSize = 14.sp
+            )
+            Divider(
+                modifier = Modifier.weight(1f),
+                color = Color.Gray,
+                thickness = 1.dp
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Bouton Google
+        LoginWithGoogle (onGoogleLoginClick = {
+
+        })
+
+        // Lien vers la page d'inscription
+        TextButton(onClick = onNavigateToSignUp) {
+            Text("Pas encore inscrit ?  S'inscrire", color = Color.Blue)
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewSignUpScreen() {
-    SignUpScreen(onNavigateToSignIn = {})
+fun PreviewSignInScreen() {
+    SignInScreen(onNavigateToSignUp = {})
 }
