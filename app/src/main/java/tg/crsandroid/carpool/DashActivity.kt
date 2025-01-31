@@ -26,6 +26,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
+import tg.crsandroid.carpool.presentation.screens.chat.ChatScreen
 import tg.crsandroid.carpool.presentation.screens.home.Content
 import tg.crsandroid.carpool.presentation.screens.home.HomePage
 import tg.crsandroid.carpool.presentation.screens.home.HomeScreen
@@ -62,7 +63,7 @@ class DashActivity : ComponentActivity() {
                 Log.i("Dash", "Not initilized")
             }
             composable("Chat") {
-                // ChatScreen(navController)
+                 ChatScreen(navController)
                 Log.i("Dash", "Not initilized")
             }
             composable("Profil") {
