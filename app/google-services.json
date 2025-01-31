@@ -30,6 +30,22 @@
           }
         },
         {
+          "client_id": "479559346358-do0j5jstfn0kshmtnof699nbkg9ta36b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tg.crsandroid.carpool",
+            "certificate_hash": "7dfc21b78d188b7501cd873d000978d644563fcf"
+          }
+        },
+        {
+          "client_id": "479559346358-emjs34e5qp27lonifm3b4876hge4m254.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tg.crsandroid.carpool",
+            "certificate_hash": "824e6d7121eac734a827ace33766dcee54f48f18"
+          }
+        },
+        {
           "client_id": "479559346358-ek4fml8rshug7qndanddoieijhpae3lj.apps.googleusercontent.com",
           "client_type": 3
         }

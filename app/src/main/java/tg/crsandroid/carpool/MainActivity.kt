@@ -74,7 +74,6 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun AppContent() {
         val context = LocalContext.current
-
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { result ->
