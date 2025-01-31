@@ -32,6 +32,8 @@ import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
 
+
+
 class MainActivity : ComponentActivity() {
     // Firebase and Authentication properties
     private val db = Firebase.firestore
@@ -82,7 +84,9 @@ class MainActivity : ComponentActivity() {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 handleSignInResult(context, task)
             } else {
+                Log.e("MainActivity", "Result code: ${result.data}")
                 showToast(context, "Connexion annulée")
+
             }
         }
 
