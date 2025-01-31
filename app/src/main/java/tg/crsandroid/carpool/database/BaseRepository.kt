@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-open class BaseRepository <T: Any> (val collectionName: String, private val modelClass: Class<T>) {
+open class BaseRepository <T: Any> (val collectionName: String, val modelClass: Class<T>) {
     private val firestore: FirebaseFirestore = Firebase.firestore
 
     suspend fun addDocument(document : T): Boolean {
