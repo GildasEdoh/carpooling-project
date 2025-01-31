@@ -3,6 +3,7 @@ package tg.crsandroid.carpool.presentation.screens.Map
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,6 +47,7 @@ fun MapScreen(modifier: Modifier = Modifier, defaultLocation: LatLng = LatLng(48
 
 
     var userLocation by remember { mutableStateOf<LatLng?>(null) }
+    var userDestination by remember { mutableStateOf<LatLng?>(null) }
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(userLocation ?: defaultLocation, 15f)
     }
@@ -93,12 +95,22 @@ fun MapScreen(modifier: Modifier = Modifier, defaultLocation: LatLng = LatLng(48
         },
         onMapLongClick = { latLng ->
             userDetails.userDestination = latLng
+            userDestination = latLng
+            // cameraPositionState.position = CameraPosition.fromLatLngZoom(latLng, 15f)
         }
     ) {
         userLocation?.let { location ->
             Marker(
                 state = MarkerState(location),
                 title = "Votre position"
+            )
+        }
+        Log.i("MAPSCREEN", "Map clicked ${userDestination}")
+        userDestination?.let { destination ->
+            Marker(
+                state = MarkerState(destination),
+                title = "Destination sélectionnée",
+                snippet = "Lat: ${destination.latitude}, Lng: ${destination.longitude}"
             )
         }
     }
