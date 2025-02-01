@@ -13,7 +13,8 @@ data class Trajet(
     val idConducteur: String = "",
     var reservations: List<String> = mutableListOf(),
     val prix: String = "",
-    val destination: LatLng? = null
+    val lattitute: Double = 0.0,
+    val longitude: Double = 0.0
 //    val passagers: Any
 ) {
     companion object {

@@ -120,14 +120,6 @@ class MainActivity : ComponentActivity() {
                         // navigateToRideList()
                         startDashBoard()
                         showToast(context, "Connexion réussie : ${it.displayName}")
-                        userDetails.getAllRiders(scope = FirestoreService.scope) { rides ->
-                            if (rides.isNotEmpty()) {
-                                trajets = rides
-                                Log.i("RIDELIST", "SUCCÈS : Liste obtenue avec ${rides.size} éléments")
-                            } else {
-                                Log.i("RIDELIST", "ERREUR : Liste vide ou échec")
-                            }
-                        }
                     } else {
                         startDashBoard()
 

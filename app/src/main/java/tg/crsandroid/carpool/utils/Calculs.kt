@@ -64,7 +64,7 @@ fun generateTrajets(baseLat: Double, baseLng: Double, count: Int): List<Trajet> 
     val durees = listOf("4h", "3h", "2h", "1h30", "1h")
     val prixRange = 2000..10000
     val seatsRange = 1..4
-    val conducteurs = listOf("100660489203576952020", "102543517565443919020", "100660489203576952020")
+    val conducteurs = listOf("100660489203576952020", "102543517565443919020", "100660489203576952020", "109892082359988150760")
 
     return List(count) {
         val randomLatLng = generateRandomLatLng(baseLat, baseLng, 10.0)
@@ -77,7 +77,8 @@ fun generateTrajets(baseLat: Double, baseLng: Double, count: Int): List<Trajet> 
             prix = (prixRange.random()).toString(),
             nbrSeats = seatsRange.random().toString(),
             idConducteur = conducteurs.random(),
-            destination = randomLatLng
+            lattitute = randomLatLng.latitude,
+            longitude = randomLatLng.longitude
         )
     }
 }

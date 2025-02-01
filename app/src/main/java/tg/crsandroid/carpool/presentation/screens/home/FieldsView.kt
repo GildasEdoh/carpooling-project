@@ -256,8 +256,8 @@ fun RideOptionsCardPassenger() {
                     }
                     if (startRides) {
                         if (userDetails.userDestination != null) {
-                            // val trajets = generateTrajets(userDetails.userDestination!!.latitude, userDetails.userDestination!!.longitude, 3)
-                            /*userDetails.insertRidesIntoDb(trajets) { isSucces ->
+                           /* val trajets = generateTrajets(userDetails.userDestination!!.latitude, userDetails.userDestination!!.longitude, 25)
+                            userDetails.insertRidesIntoDb(trajets) { isSucces ->
                                 if (isSucces) {
                                     Log.i("TRAJEST", "TRAJETS AJOUTES")
                                 } else {

@@ -61,10 +61,23 @@ fun RideListScreen(
     onBackPressed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val trajets = remember { generateSampleTrajets() }
-
     var selectedTrajet by remember { mutableStateOf<Trajet?>(null) }
-    val conducteurs = emptyList<Utilisateur>()
+    // State pour gérer les trajets et l'état de chargement
+    var trajets = remember { mutableStateOf<List<Trajet>>(emptyList()) }
+    val isLoading = remember { mutableStateOf(true) } // Indicateur de chargement
+
+    // Récupérer les trajets depuis Firestore dans un LaunchedEffect
+    LaunchedEffect(Unit) {
+        // Appeler la fonction suspendue dans une coroutine
+        try {
+            trajets.value = getAllTrajets() // Appeler la fonction suspendue ici
+            Log.i("REUSIIS JJJJJJJJJJJJ", "JJJJJJJJJJ ----- ----- -------")
+        } catch (e: Exception) {
+            Log.i("ERREUR", "ERERUUR ----- ----- -------")
+            trajets.value = emptyList() // En cas d'erreur, retourner une liste vide
+        }
+        isLoading.value = false // Changer l'état de chargement une fois la récupération terminée
+    }
 
     Scaffold(
         topBar = {
@@ -103,22 +116,39 @@ fun RideListScreen(
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             item { Spacer(modifier = Modifier.height(8.dp)) }
-            items(trajets) { trajet ->
-                TrajetCard(
-                    trajet = trajet,
-                    onReservationClick = { selectedTrajet = it }
-                )
+
+            // Vérifier si les données sont encore en train de charger
+            if (isLoading.value) {
+                Log.i("LISTE_____", "Chargement en cours")
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center) // Center l'indicateur
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            } else {
+                Log.i("LISTE_____", "Chargement fini: " + trajets.value.size)
+                // Si les trajets sont récupérés, on les affiche
+                items(trajets.value) { trajet ->
+                    TrajetCard(
+                        trajet = trajet,
+                        onReservationClick = { /* logique pour réserver un trajet */ }
+                    )
+                }
             }
+
             item { Spacer(modifier = Modifier.height(8.dp)) }
         }
     }
-
     selectedTrajet?.let { trajet ->
         ConfirmationDialog(
             trajet = trajet,
             onDismiss = { selectedTrajet = null },
             onConfirm = {
-//                reserverTrajet(trajet)
+            // eserverTrajet(trajet)
                 selectedTrajet = null
             }
         )
@@ -396,107 +426,18 @@ private fun generateSampleTrajets(): List<Trajet> {
         idConducteur = "G"
         )
     )
-    userDetails.getAllRiders(scope = FirestoreService.scope) { rides ->
-        if (rides.isNotEmpty()) {
-            trajets = rides
-            Log.i("RIDELIST", "SUCCÈS : Liste obtenue avec ${rides.size} éléments")
-        } else {
-            Log.i("RIDELIST", "ERREUR : Liste vide ou échec")
-        }
-    }
-    if (FirestoreService.trajets != null) {
-        trajets = FirestoreService.trajets!!
-    } else {
-        Log.i("FIRESOT------", "trajet firestore null")
-    }
     return trajets
 }
-private fun getRides() {
-    userDetails.getAllRiders(scope = FirestoreService.scope) { rides ->
-        if (rides.isNotEmpty()) {
-            Log.i("RIDELIST", "SUCCÈS : Liste obtenue avec ${rides.size} éléments")
-        } else {
-            Log.i("RIDELIST", "ERREUR : Liste vide ou échec")
-        }
+suspend fun getAllTrajets(): List<Trajet> {
+    return try {
+        FirestoreService.ridesRepo.getAllDocuments() // Appel à la fonction suspendue
+    } catch (e: Exception) {
+        emptyList() // Retourner une liste vide en cas d'erreur
     }
 }
+suspend fun getUserById() {
 
-//@Composable
-//fun RideListContent(modifier: Modifier = Modifier, padding: PaddingValues) {
-//    val trajets = remember { generateSampleTrajets() }
-//    val context = LocalContext.current
-//    val (rayon, setRayon) = remember { mutableStateOf(0) }
-//    val (prix, setPrix) = remember { mutableStateOf(0) }
-//    val (places, setPlaces) = remember { mutableStateOf(0) }
-//
-//    Column(modifier = modifier.padding(padding)) {
-//        FilterOptions(
-//            rayon = rayon,
-//            onRayonChange = setRayon,
-//            prix = prix,
-//            onPrixChange = setPrix,
-//            places = places,
-//            onPlacesChange = setPlaces
-//        )
-//        Text(
-//            text = "Nombre de trajets retrouvés: ${trajets.size}",
-//            style = MaterialTheme.typography.bodyLarge,
-//            modifier = Modifier.padding(16.dp)
-//        )
-//        Spacer(modifier = Modifier.height(8.dp))
-//        LazyColumn(
-//            modifier = modifier
-//                .fillMaxSize()
-//                .padding(horizontal = 16.dp),
-//            verticalArrangement = Arrangement.spacedBy(15.dp)
-//        ) {
-//            item { Spacer(modifier = Modifier.height(8.dp)) }
-//            items(trajets) { trajet ->
-//                TrajetCard(
-//                    onReservationClick = TODO(),
-//                    trajet = trajet,
-////                    onReservationClick = { selectedTrajet = it }
-//                )
-//            }
-//            item { Spacer(modifier = Modifier.height(8.dp)) }
-//        }
-//    }
-//}
-//
-//@Composable
-//fun FilterOptions(
-//    rayon: Int,
-//    onRayonChange: (Int) -> Unit,
-//    prix: Int,
-//    onPrixChange: (Int) -> Unit,
-//    places: Int,
-//    onPlacesChange: (Int) -> Unit
-//) {
-//    Column {
-//        Text("Filter Options", style = MaterialTheme.typography.bodySmall)
-//        Spacer(modifier = Modifier.height(8.dp))
-//        // Rayon filter
-//        Text("Rayon: $rayon km")
-//        Slider(
-//            value = rayon.toFloat(),
-//            onValueChange = { onRayonChange(it.toInt()) },
-//            valueRange = 0f..100f
-//        )
-//        Spacer(modifier = Modifier.height(8.dp))
-//        // Prix filter
-//        Text("Prix: $prix FCFA")
-//        Slider(
-//            value = prix.toFloat(),
-//            onValueChange = { onPrixChange(it.toInt()) },
-//            valueRange = 0f..10000f
-//        )
-//        Spacer(modifier = Modifier.height(8.dp))
-//        // Places filter
-//        Text("Places: $places")
-//        Slider(
-//            value = places.toFloat(),
-//            onValueChange = { onPlacesChange(it.toInt()) },
-//            valueRange = 0f..10f
-//        )
-//    }
-//}
+}
+fun startChat() {
+
+}

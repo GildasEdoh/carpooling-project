@@ -1,5 +1,6 @@
 package tg.crsandroid.carpool.database
 
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -50,12 +51,23 @@ open class BaseRepository <T: Any> (val collectionName: String, val modelClass: 
     // Récupérer tous les documents
     suspend fun getAllDocuments(): List<T> {
         return try {
+            // Récupérer les documents depuis Firestore
             val querySnapshot: QuerySnapshot = firestore.collection(collectionName)
                 .get()
                 .await()
-            querySnapshot.documents.mapNotNull { it.toObject(modelClass) }
+
+            // Convertir les documents en objets de type T et afficher dans le log
+            val documents = querySnapshot.documents.mapNotNull { it.toObject(modelClass) }
+
+            // Affichage des documents récupérés dans le log
+            documents.forEach { document ->
+                Log.i("FirestoreService", "GETIING Document: $document") // Affiche chaque document
+            }
+
+            documents // Retourner la liste des documents récupérés
         } catch (e: Exception) {
-            emptyList()
+            Log.e("FirestoreService", "Error getting documents", e) // En cas d'erreur, afficher dans le log
+            emptyList() // Retourner une liste vide en cas d'erreur
         }
     }
 

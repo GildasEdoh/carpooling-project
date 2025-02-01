@@ -82,4 +82,15 @@ class UserRepo : BaseRepository<Utilisateur>("users", Utilisateur::class.java) {
             null
         }
     }
+    suspend fun getUserById(id: String): Utilisateur? { // drivers
+        return try {
+            val documentSnapshot = firestore.collection(collectionName)
+                .document(id)
+                .get()
+                .await()
+            documentSnapshot.toObject(modelClass)
+        } catch (e: Exception) {
+            null
+        }
+    }
 }
