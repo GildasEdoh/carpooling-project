@@ -206,7 +206,7 @@ fun fetchParticipantNames(
     otherParticipants.forEach { participantId ->
         db.collection("users").document(participantId).get()
             .addOnSuccessListener { document ->
-                val userName = document.getString("nom") ?: "Inconnu"
+                val userName = document.getString("nomUtilisateur") ?: "Inconnu"
                 namesMap[participantId] = userName
                 Log.i("fetchParticipantNames", "Récupéré: $participantId -> $userName")
                 onResult(namesMap)
