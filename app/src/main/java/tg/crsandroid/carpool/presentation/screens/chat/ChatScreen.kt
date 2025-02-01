@@ -73,7 +73,7 @@ fun ChatScreen(userIdX: String?, userIdY: String?) {
                 .get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {
-                        userName = document.getString("name") ?: "Unknown User"
+                        userName = document.getString("nom") ?: "Inconnu"
                     }
                 }
                 .addOnFailureListener { e ->
