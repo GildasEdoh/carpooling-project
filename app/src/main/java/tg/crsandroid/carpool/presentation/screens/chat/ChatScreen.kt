@@ -1,37 +1,56 @@
 package tg.crsandroid.carpool.presentation.screens.chat
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
-import java.util.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.ui.layout.ContentScale
-import androidx.navigation.NavController
 import com.google.firebase.firestore.SetOptions
 import tg.crsandroid.carpool.model.Message
-
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @Composable
@@ -42,9 +61,27 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
     var newMessage by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
 
-    //var imageUri by remember { mutableStateOf<Uri?>(null) }
     // 🔹 État pour le défilement automatique
     val listState = rememberLazyListState()
+
+    var userName by remember { mutableStateOf("") } // État pour stocker le nom de l'utilisateur
+
+    // Récupérer le nom de l'utilisateur avec qui on discute
+    LaunchedEffect(userIdY) {
+        if (userIdY != null) {
+            db.collection("users")
+                .document(userIdY)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        userName = document.getString("name") ?: "Unknown User"
+                    }
+                }
+                .addOnFailureListener { e ->
+                    println("Erreur lors de la récupération du nom de l'utilisateur : $e")
+                }
+        }
+    }
 
     if (userIdX != null && userIdY != null) {
         val chatId = getChatId(userIdX, userIdY)
@@ -132,6 +169,37 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
+            // Bannière en haut avec le nom de l'utilisateur et une flèche pour revenir en arrière
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF4169E1))
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+                    println("Retour en arrière")
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Retour",
+                        tint = Color.White
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Icône de profil avec la première lettre du nom de l'utilisateur
+                ProfileIcon(userName)
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = userName,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color.White
+                )
+            }
+
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             } else if (messages.isEmpty()) {
@@ -185,6 +253,26 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
         }
     }
 
+}
+
+@Composable
+fun ProfileIcon(userName: String) {
+    val firstLetter = userName.take(1).uppercase() // Prendre la première lettre du nom
+    val backgroundColor = Color(0xFF00008B) // Couleur de fond de l'icône
+
+    Box(
+        modifier = Modifier
+            .size(40.dp) // Taille de l'icône
+            .background(backgroundColor, shape = CircleShape)
+            .padding(8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = firstLetter,
+            style = MaterialTheme.typography.titleSmall,
+            color = Color.White
+        )
+    }
 }
 
 fun getChatId(userIdX: String, userIdY: String): String {
