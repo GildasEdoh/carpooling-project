@@ -58,24 +58,17 @@ fun RideOptionsCardPassenger() {
         ) {
             if (selectedIndex == 0) {
                 Column(modifier = Modifier) {
-                    OutlinedTextField(
-                        value = depart,
-                        onValueChange = { depart = it },
-                        placeholder = { Text("Entrez la destination", fontWeight = FontWeight.Normal, fontFamily = poppinsFontFamily) },
-                        shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
+                    Text(
+                        text = "Selectionnez la destination sur la carte", // La variable contenant l'information à afficher
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color(0xFFF1F2F5))
-                            .height(50.dp),
-                        textStyle = TextStyle(
-                            fontFamily = poppinsFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp
-                        ),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            unfocusedBorderColor = Color(0xE6C7C7CB),
-                            focusedBorderColor = Color(0xD03C52C5)
-                        )
+                            .height(50.dp)
+                            .padding(vertical = 14.dp), // Ajuste la position verticale du texte
+                        color = Color.Black // Couleur du texte
                     )
                 }
             }

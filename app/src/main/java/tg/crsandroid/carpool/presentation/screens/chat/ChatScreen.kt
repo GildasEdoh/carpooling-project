@@ -28,13 +28,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.ui.layout.ContentScale
+import androidx.navigation.NavController
 import com.google.firebase.firestore.SetOptions
 import tg.crsandroid.carpool.model.Message
 
 
 
 @Composable
-fun ChatScreen(userIdX: String?, userIdY: String?) {
+fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?) {
     val db = FirebaseFirestore.getInstance()
     val messagesCollection = db.collection("c")
     var messages by remember { mutableStateOf<List<Message>>(emptyList()) }
