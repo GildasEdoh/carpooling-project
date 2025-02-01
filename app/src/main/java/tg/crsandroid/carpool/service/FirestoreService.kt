@@ -24,6 +24,7 @@ object FirestoreService {
 
 object userDetails {
     var userDestination: LatLng? = null
+    var userLocation: LatLng? = null
     fun insertRidesIntoDb(drivers: List<Trajet>, callback: (Boolean) -> Unit) {
         for (elt in drivers) {
             launchSuspendFunction(scope, callback) {

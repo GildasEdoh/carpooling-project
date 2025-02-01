@@ -104,6 +104,7 @@ fun MapScreen(modifier: Modifier = Modifier, defaultLocation: LatLng = LatLng(6.
                 state = MarkerState(location),
                 title = "Votre position"
             )
+            userDetails.userLocation = location
             Log.i("MAPSCREEN", "User location ${userLocation}")
         }
         Log.i("MAPSCREEN", "Map clicked ${userDestination}")

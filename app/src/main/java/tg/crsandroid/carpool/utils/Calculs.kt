@@ -26,16 +26,14 @@ fun distanceBetween(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Dou
 fun findNearbyDrivers(
     userLocation: LatLng,
     destination: LatLng,
-    drivers: List<Utilisateur>,
+    trajets: List<Trajet>,
     maxDistanceKm: Double = 5.0
-): List<Utilisateur> {
-    return drivers.filter { driver ->
-        driver.location?.let {
-            distanceBetween(
-                userLocation.latitude, userLocation.longitude,
-                it.latitude, driver.location.longitude
-            )
-        }!! <= maxDistanceKm
+): List<Trajet> {
+    return trajets.filter { trajet ->
+        distanceBetween (
+            userLocation.latitude, userLocation.longitude,
+            trajet.lattitute, trajet.longitude
+        ) <= maxDistanceKm
     }
 }
 

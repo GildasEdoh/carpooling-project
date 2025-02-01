@@ -33,6 +33,7 @@ import tg.crsandroid.carpool.model.Reservation
 import tg.crsandroid.carpool.model.Trajet
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.userDetails
+import tg.crsandroid.carpool.utils.findNearbyDrivers
 import java.time.LocalDate
 
 
@@ -132,6 +133,11 @@ fun RideListScreen(
             } else {
                 Log.i("LISTE_____", "Chargement fini: " + trajets.value.size)
                 // Si les trajets sont récupérés, on les affiche
+                if (userDetails.userDestination != null) {
+                    val near = findNearbyDrivers(userDetails.userLocation!!, userDetails.userDestination!!, trajets.value, 5.0)
+                    // trajets.value = near
+                    Log.i("RideList", "Near : ${near}")
+                }
                 items(trajets.value) { trajet ->
                     TrajetCard(
                         trajet = trajet,
