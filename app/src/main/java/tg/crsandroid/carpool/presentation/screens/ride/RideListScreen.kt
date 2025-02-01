@@ -27,10 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.example.carpooling_project.model.Utilisateur
+import kotlinx.coroutines.delay
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.model.Reservation
 import tg.crsandroid.carpool.model.Trajet
 import tg.crsandroid.carpool.service.FirestoreService
+import tg.crsandroid.carpool.service.userDetails
 import java.time.LocalDate
 
 
@@ -60,6 +62,7 @@ fun RideListScreen(
     modifier: Modifier = Modifier
 ) {
     val trajets = remember { generateSampleTrajets() }
+
     var selectedTrajet by remember { mutableStateOf<Trajet?>(null) }
     val conducteurs = emptyList<Utilisateur>()
 
@@ -344,7 +347,7 @@ private fun ConfirmationDialog(
 }
 
 private fun reserverTrajet(trajet: Trajet) {
-    val reservation = Reservation(
+    val reservation = Reservation (
         idConducteur = FirestoreService.currentUser.id!!,
         date = LocalDate.now().toString(),
         idTrajet = trajet.id
@@ -352,7 +355,7 @@ private fun reserverTrajet(trajet: Trajet) {
 }
 
 private fun generateSampleTrajets(): List<Trajet> {
-    return listOf(
+    var trajets = listOf(
         Trajet(
             lieuDepart = "Lomé",
             lieuArrivee = "Kara",
@@ -381,9 +384,43 @@ private fun generateSampleTrajets(): List<Trajet> {
             prix = 2000.toString(),
             nbrSeats = 1.toString(),
             idConducteur = "G"
+        ),
+        Trajet(
+        lieuDepart = "Lomé",
+        lieuArrivee = "Aného",
+        heureDepart = "10:00",
+        heureArrivee = "11:30",
+        duree = "1h30",
+        prix = 2000.toString(),
+        nbrSeats = 1.toString(),
+        idConducteur = "G"
         )
     )
+    userDetails.getAllRiders(scope = FirestoreService.scope) { rides ->
+        if (rides.isNotEmpty()) {
+            trajets = rides
+            Log.i("RIDELIST", "SUCCÈS : Liste obtenue avec ${rides.size} éléments")
+        } else {
+            Log.i("RIDELIST", "ERREUR : Liste vide ou échec")
+        }
+    }
+    if (FirestoreService.trajets != null) {
+        trajets = FirestoreService.trajets!!
+    } else {
+        Log.i("FIRESOT------", "trajet firestore null")
+    }
+    return trajets
 }
+private fun getRides() {
+    userDetails.getAllRiders(scope = FirestoreService.scope) { rides ->
+        if (rides.isNotEmpty()) {
+            Log.i("RIDELIST", "SUCCÈS : Liste obtenue avec ${rides.size} éléments")
+        } else {
+            Log.i("RIDELIST", "ERREUR : Liste vide ou échec")
+        }
+    }
+}
+
 //@Composable
 //fun RideListContent(modifier: Modifier = Modifier, padding: PaddingValues) {
 //    val trajets = remember { generateSampleTrajets() }

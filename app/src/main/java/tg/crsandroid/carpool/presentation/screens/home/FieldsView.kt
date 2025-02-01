@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import tg.crsandroid.carpool.model.Trajet
 import tg.crsandroid.carpool.service.FirestoreService
+import tg.crsandroid.carpool.service.userDetails
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
+import tg.crsandroid.carpool.utils.generateTrajets
 
 class FieldsView {
 }
@@ -231,6 +233,8 @@ fun RideOptionsCardPassenger() {
                             } else {
                                 startRides = true
                                 FirestoreService.currentUser.type = "Passager"
+
+
                             }
                         },
                         enabled = true,
@@ -251,6 +255,17 @@ fun RideOptionsCardPassenger() {
                         showDialog = false
                     }
                     if (startRides) {
+                        if (userDetails.userDestination != null) {
+                            // val trajets = generateTrajets(userDetails.userDestination!!.latitude, userDetails.userDestination!!.longitude, 3)
+                            /*userDetails.insertRidesIntoDb(trajets) { isSucces ->
+                                if (isSucces) {
+                                    Log.i("TRAJEST", "TRAJETS AJOUTES")
+                                } else {
+                                    Log.i("TRAJEST", "ERREUR")
+                                }
+
+                            }*/
+                        }
                         DisplayRideList()
                         startRides = false
                     }

@@ -29,6 +29,8 @@ import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
+import tg.crsandroid.carpool.service.FirestoreService.trajets
+import tg.crsandroid.carpool.service.userDetails
 
 class MainActivity : ComponentActivity() {
     // Firebase and Authentication properties
@@ -118,6 +120,14 @@ class MainActivity : ComponentActivity() {
                         // navigateToRideList()
                         startDashBoard()
                         showToast(context, "Connexion réussie : ${it.displayName}")
+                        userDetails.getAllRiders(scope = FirestoreService.scope) { rides ->
+                            if (rides.isNotEmpty()) {
+                                trajets = rides
+                                Log.i("RIDELIST", "SUCCÈS : Liste obtenue avec ${rides.size} éléments")
+                            } else {
+                                Log.i("RIDELIST", "ERREUR : Liste vide ou échec")
+                            }
+                        }
                     } else {
                         startDashBoard()
 
@@ -145,6 +155,7 @@ class MainActivity : ComponentActivity() {
                 Log.i("Main", "Utilisateur  non ajouté")
             }
         }
+
     }
 
     private fun navigateToRideList() {
