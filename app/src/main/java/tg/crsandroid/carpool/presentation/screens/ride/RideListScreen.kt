@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,8 +27,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import com.example.carpooling_project.model.Utilisateur
-import kotlinx.coroutines.delay
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.model.Reservation
 import tg.crsandroid.carpool.model.Trajet
@@ -35,7 +34,6 @@ import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.userDetails
 import tg.crsandroid.carpool.utils.findNearbyDrivers
 import java.time.LocalDate
-
 
 class RideListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,8 +137,11 @@ fun RideListScreen(
                     Log.i("RideList", "Near : ${near}")
                 }
                 items(trajets.value) { trajet ->
+                    var isExpanded by remember { mutableStateOf(false) }
                     TrajetCard(
                         trajet = trajet,
+                        isExpanded = isExpanded,
+                        onInfoClick = { isExpanded = !isExpanded },
                         onReservationClick = { /* logique pour réserver un trajet */ }
                     )
                 }
@@ -154,7 +155,7 @@ fun RideListScreen(
             trajet = trajet,
             onDismiss = { selectedTrajet = null },
             onConfirm = {
-            // eserverTrajet(trajet)
+                // Réserver le trajet
                 selectedTrajet = null
             }
         )
@@ -164,6 +165,8 @@ fun RideListScreen(
 @Composable
 private fun TrajetCard(
     trajet: Trajet,
+    isExpanded: Boolean,
+    onInfoClick: () -> Unit,
     onReservationClick: (Trajet) -> Unit
 ) {
     Card(
@@ -183,109 +186,118 @@ private fun TrajetCard(
             // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(
-                    imageVector = Icons.Default.ShoppingCart,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
-                )
-                Column {
-                    Text(
-                        text = "${trajet.lieuDepart} - ${trajet.lieuArrivee}",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontFamily = FontFamily(Font(R.font.poppins_semibold)),
-                        fontSize = 18.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
                     )
-                    Text(
-                        text = "Trajet direct • ${trajet.duree}",
-                        style = MaterialTheme.typography.bodyMedium,
-//                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        fontFamily = FontFamily(Font(R.font.poppins_regular))
-                    )
-                }
-            }
-
-            Divider(color = Color(0xFFEEEEEE), thickness = 2.dp)
-
-            // Details
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                InfoItem(
-                    icon = Icons.Default.AccountCircle,
-                    title = "Conducteur",
-                    value = "EDOH"
-                )
-                InfoItem(
-                    icon = Icons.Default.DateRange,
-                    title = "Départ",
-                    value = trajet.heureDepart
-                )
-                InfoItem(
-                    icon = Icons.Default.CheckCircle,
-                    title = "Arrivée",
-                    value = trajet.heureArrivee
-                )
-                InfoItem(
-                    icon = Icons.Default.AccountCircle,
-                    title = "Places",
-                    value = trajet.nbrSeats
-                )
-                InfoItem(
-                    icon = Icons.Default.Info,
-                    title = "Infos",
-                    value = "",
-                    onClick = {
-                        Log.i("RIDELIST", "Liste ride")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        Text(
+                            text = "${trajet.lieuDepart} - ${trajet.lieuArrivee}",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontFamily = FontFamily(Font(R.font.poppins_semibold)),
+                            fontSize = 18.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = "Trajet direct • ${trajet.duree}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            fontFamily = FontFamily(Font(R.font.poppins_regular))
+                        )
                     }
-                )
-            }
-
-            // Price & Button
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        text = "Prix par place",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
-                    )
-                    Text(
-                        text = "${trajet.prix} FCFA",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontFamily = FontFamily(Font(R.font.poppins_bold))
+                }
+                IconButton(onClick = onInfoClick) {
+                    Icon(
+                        imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.Info,
+                        contentDescription = if (isExpanded) "Réduire" else "Infos",
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
+            }
 
-                Button(
-                    onClick = { onReservationClick(trajet) },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 4.dp,
-                        pressedElevation = 8.dp
-                    )
+            AnimatedVisibility(visible = isExpanded) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = "Réserver",
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_semibold)),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                    Divider(color = Color(0xFFEEEEEE), thickness = 2.dp)
+
+                    // Details
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        InfoItem(
+                            icon = Icons.Default.AccountCircle,
+                            title = "Conducteur",
+                            value = "EDOH"
+                        )
+                        InfoItem(
+                            icon = Icons.Default.DateRange,
+                            title = "Départ",
+                            value = trajet.heureDepart
+                        )
+                        InfoItem(
+                            icon = Icons.Default.CheckCircle,
+                            title = "Arrivée",
+                            value = trajet.heureArrivee
+                        )
+                        InfoItem(
+                            icon = Icons.Default.AccountCircle,
+                            title = "Places",
+                            value = trajet.nbrSeats
+                        )
+                    }
+
+                    // Price & Button
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(
+                                text = "Prix par place",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                            )
+                            Text(
+                                text = "${trajet.prix} FCFA",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontFamily = FontFamily(Font(R.font.poppins_bold))
+                            )
+                        }
+
+                        Button(
+                            onClick = { onReservationClick(trajet) },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color.White
+                            ),
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 4.dp,
+                                pressedElevation = 8.dp
+                            )
+                        ) {
+                            Text(
+                                text = "Réserver",
+                                fontSize = 18.sp,
+                                fontFamily = FontFamily(Font(R.font.poppins_semibold)),
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -329,9 +341,9 @@ private fun ConfirmationDialog(
     onConfirm: () -> Unit
 ) {
     AlertDialog(
-    onDismissRequest = onDismiss,
-    modifier = Modifier.padding(24.dp),
-    properties = DialogProperties(usePlatformDefaultWidth = false)
+        onDismissRequest = onDismiss,
+        modifier = Modifier.padding(24.dp),
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Column(
             modifier = Modifier
@@ -383,7 +395,7 @@ private fun ConfirmationDialog(
 }
 
 private fun reserverTrajet(trajet: Trajet) {
-    val reservation = Reservation (
+    val reservation = Reservation(
         idConducteur = FirestoreService.currentUser.id!!,
         date = LocalDate.now().toString(),
         idTrajet = trajet.id
@@ -422,28 +434,23 @@ private fun generateSampleTrajets(): List<Trajet> {
             idConducteur = "G"
         ),
         Trajet(
-        lieuDepart = "Lomé",
-        lieuArrivee = "Aného",
-        heureDepart = "10:00",
-        heureArrivee = "11:30",
-        duree = "1h30",
-        prix = 2000.toString(),
-        nbrSeats = 1.toString(),
-        idConducteur = "G"
+            lieuDepart = "Lomé",
+            lieuArrivee = "Aného",
+            heureDepart = "10:00",
+            heureArrivee = "11:30",
+            duree = "1h30",
+            prix = 2000.toString(),
+            nbrSeats = 1.toString(),
+            idConducteur = "G"
         )
     )
     return trajets
 }
+
 suspend fun getAllTrajets(): List<Trajet> {
     return try {
         FirestoreService.ridesRepo.getAllDocuments() // Appel à la fonction suspendue
     } catch (e: Exception) {
         emptyList() // Retourner une liste vide en cas d'erreur
     }
-}
-suspend fun getUserById() {
-
-}
-fun startChat() {
-
 }

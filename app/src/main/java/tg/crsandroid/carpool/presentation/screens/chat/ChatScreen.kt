@@ -1,19 +1,7 @@
 package tg.crsandroid.carpool.presentation.screens.chat
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,22 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,10 +23,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import tg.crsandroid.carpool.model.Message
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?) {
     val db = FirebaseFirestore.getInstance()
@@ -61,12 +34,9 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
     var newMessage by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
 
-    // 🔹 État pour le défilement automatique
     val listState = rememberLazyListState()
+    var userName by remember { mutableStateOf("") }
 
-    var userName by remember { mutableStateOf("") } // État pour stocker le nom de l'utilisateur
-
-    // Récupérer le nom de l'utilisateur avec qui on discute
     LaunchedEffect(userIdY) {
         if (userIdY != null) {
             db.collection("users")
@@ -86,24 +56,23 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
     if (userIdX != null && userIdY != null) {
         val chatId = getChatId(userIdX, userIdY)
 
-        // Récupérer les messages entre les deux utilisateurs
         DisposableEffect(chatId) {
             val query = db.collection("chats")
                 .document(chatId)
                 .collection("messages")
-                .orderBy("timestamp") // Trier par timestamp
+                .orderBy("timestamp")
 
-            val listener = query.addSnapshotListener {querySnapshot, error ->
+            val listener = query.addSnapshotListener { querySnapshot, error ->
                 if (error != null) {
                     println("Erreur lors de la récupération des messages : $error")
                     return@addSnapshotListener
                 }
-                if (querySnapshot!= null) {
+                if (querySnapshot != null) {
                     val messageList = querySnapshot.documents.mapNotNull { doc ->
                         val text = doc.getString("text") ?: ""
                         val senderId = doc.getString("senderId") ?: ""
                         val timestamp = doc.getTimestamp("timestamp")?.toDate()
-                        val imageUrl = doc.getString("imageUrl") // Ajouter l'URL de l'image
+                        val imageUrl = doc.getString("imageUrl")
                         Message(text, senderId, timestamp, imageUrl)
                     }
                     messages = messageList
@@ -111,25 +80,21 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
                 }
             }
 
-            // Nettoyage du listener quand le composable est détruit
             onDispose {
                 listener.remove()
             }
         }
     }
 
-    // 🔹 Faire défiler quand `messages` change
     LaunchedEffect(messages) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
         }
     }
 
-    // Fonction pour envoyer un message
     fun sendMessage() {
         if (newMessage.isNotBlank() && userIdX != null && userIdY != null) {
             val chatId = getChatId(userIdX, userIdY)
-
             val messageData = hashMapOf(
                 "text" to newMessage,
                 "senderId" to userIdX,
@@ -138,18 +103,20 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
 
             db.collection("chats")
                 .document(chatId)
-                .set(mapOf(
-                    "participants" to listOf(userIdX, userIdY),
-                    "lastMessage" to newMessage,
-                    "timestamp" to Timestamp.now()
-                ), SetOptions.merge())
+                .set(
+                    mapOf(
+                        "participants" to listOf(userIdX, userIdY),
+                        "lastMessage" to newMessage,
+                        "timestamp" to Timestamp.now()
+                    ), SetOptions.merge()
+                )
 
             db.collection("chats")
                 .document(chatId)
                 .collection("messages")
                 .add(messageData)
                 .addOnSuccessListener {
-                    newMessage = "" // Réinitialiser le champ de texte
+                    newMessage = ""
                 }
                 .addOnFailureListener { e ->
                     println("Erreur lors de l'envoi du message : $e")
@@ -158,23 +125,20 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
         }
     }
 
-
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color.White // Arrière-plan bleu clair
-    ){
-        // Afficher les messages ou un message par défaut
+        color = Color.White
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Bannière en haut avec le nom de l'utilisateur et une flèche pour revenir en arrière
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xFF4169E1))
-                    .padding(bottom = 16.dp),
+                    .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
@@ -187,15 +151,11 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-
-                // Icône de profil avec la première lettre du nom de l'utilisateur
                 ProfileIcon(userName)
-
                 Spacer(modifier = Modifier.width(8.dp))
-
                 Text(
                     text = userName,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )
             }
@@ -205,7 +165,7 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
             } else if (messages.isEmpty()) {
                 Text(
                     text = "No messages yet",
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             } else {
@@ -219,8 +179,6 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
                 }
             }
 
-
-            // Champ de texte et bouton d'envoi
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -234,7 +192,10 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
-                    placeholder = { Text("Entrez votre message...") }
+                    placeholder = { Text("Entrez votre message...") },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color(0xFFF0F8FF)
+                    )
                 )
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -246,30 +207,29 @@ fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?
                     Icon(
                         imageVector = Icons.Default.Send,
                         contentDescription = "Envoyer",
-                        tint = Color.White // Couleur de l'icône
+                        tint = Color.White
                     )
                 }
             }
         }
     }
-
 }
 
 @Composable
 fun ProfileIcon(userName: String) {
-    val firstLetter = userName.take(1).uppercase() // Prendre la première lettre du nom
-    val backgroundColor = Color(0xFF00008B) // Couleur de fond de l'icône
+    val firstLetter = userName.take(1).uppercase()
+    val backgroundColor = Color(0xFF00008B)
 
     Box(
         modifier = Modifier
-            .size(40.dp) // Taille de l'icône
+            .size(40.dp)
             .background(backgroundColor, shape = CircleShape)
             .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = firstLetter,
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.titleMedium,
             color = Color.White
         )
     }
@@ -299,8 +259,6 @@ fun MessageItem(message: Message, userIdX: String?) {
                 .background(backgroundColor, shape = RoundedCornerShape(8.dp))
                 .padding(8.dp)
         ) {
-
-
             Text(
                 text = message.text,
                 style = MaterialTheme.typography.bodyLarge,
@@ -319,11 +277,8 @@ fun MessageItem(message: Message, userIdX: String?) {
     }
 }
 
-// Fonction pour formater le timestamp en une chaîne lisible
 fun formatTimestamp(timestamp: Date?): String {
     if (timestamp == null) return ""
     val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
     return formatter.format(timestamp)
 }
-
-

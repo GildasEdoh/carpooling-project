@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
+import tg.crsandroid.carpool.presentation.screens.home.HomePage
 import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
         initializeGoogleSignIn()
 
         setContent {
-            AppContent()
+            //AppContent()
             // Initialiser FusedLocationProviderClient
             // Démarrer les mises à jour de localisation
 //             HomeScreen(
@@ -61,6 +62,7 @@ class MainActivity : ComponentActivity() {
 ////                longitude = longitude,
 ////                latitude = latitude,
 //            )
+            startDashBoard()
         }
     }
 

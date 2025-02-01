@@ -16,6 +16,7 @@ import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.presentation.screens.chat.ChatScreen
 import tg.crsandroid.carpool.presentation.screens.home.Content
+import tg.crsandroid.carpool.presentation.screens.login.ProfileScreen
 
 class DashActivity : ComponentActivity() {
     // Firebase and Authentication properties
@@ -52,7 +53,7 @@ class DashActivity : ComponentActivity() {
                 Log.i("Dash", "Not initilized")
             }
             composable("Profil") {
-                // ProfileScreen(navController)
+                ProfileScreen(navController)
                 Log.i("Dash", "Not initilized")
             }
             composable("listeTrajets") {
