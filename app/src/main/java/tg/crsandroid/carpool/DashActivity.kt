@@ -63,7 +63,7 @@ class DashActivity : ComponentActivity() {
                 Log.i("Dash", "Not initilized")
             }
             composable("Chat") {
-                 ChatScreen(navController)
+                 //ChatScreen(navController)
                 Log.i("Dash", "Not initilized")
             }
             composable("Profil") {

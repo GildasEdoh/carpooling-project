@@ -4,8 +4,7 @@ import java.util.Date
 
 data class Chat(
     val chatId: String,
-    val user1: String,
-    val user2: String,
+    val participants: List<String>,
     val lastMessage: String,
-    val timestamp: Date
+    val timestamp: Date?
 )
