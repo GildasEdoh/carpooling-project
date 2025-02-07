@@ -137,12 +137,13 @@ fun ChatScreen(navController: NavController, userIdX: String?, userIdY: String?)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFF4169E1))
+                    .background(Color(0xFF3C52C5))
                     .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
                     println("Retour en arrière")
+                    navController.popBackStack()
                 }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,

@@ -50,9 +50,10 @@ class DashActivity : ComponentActivity() {
                 // HistoryScreen(navController)
                 Log.i("Dash", "Not initilized")
             }
-            composable("Chat") {
-                idy = FirestoreService.idY!!
-                ChatScreen(navController, idx, idy)
+            composable("ChatScreen/{user1}/{user2}") {backStackEntry ->
+                val user1 = backStackEntry.arguments?.getString("user1")
+                val user2 = backStackEntry.arguments?.getString("user2")
+                ChatScreen(navController, user1, user2)
                 Log.i("Dash", "Not initialized")
             }
             composable("ChatHome") {

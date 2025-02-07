@@ -266,7 +266,8 @@ private fun TrajetCard(
                             value = ".....",
                             onClick = {
                                 FirestoreService.idY = trajet.idConducteur
-                                startChat(navController)
+                                val route = "ChatScreen/${FirestoreService.currentUser.id}/${trajet.idConducteur}"
+                                startChat(navController, route)
                                 Log.i("RideList", "Contacter le conducteur")
                             }
                         )
@@ -430,8 +431,8 @@ private suspend fun getAllTrajets(): List<Trajet> {
     }
 }
 
-private fun startChat(navController: NavController) {
-    navController.navigate("Chat") {
+private fun startChat(navController: NavController, route: String) {
+    navController.navigate(route) {
         popUpTo(navController.graph.startDestinationId)
         launchSingleTop = true
     }
