@@ -142,6 +142,7 @@ fun ChatScreen(navController: NavController, userIdX: String?, userIdY: String?)
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
+                    navController.popBackStack()
                     println("Retour en arrière")
                 }) {
                     Icon(
