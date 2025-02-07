@@ -12,15 +12,17 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-import tg.crsandroid.carpool.manager.FirebaseAuthManager
-import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
+import tg.crsandroid.carpool.presentation.screens.chat.ChatHomeScreen
 import tg.crsandroid.carpool.presentation.screens.chat.ChatScreen
 import tg.crsandroid.carpool.presentation.screens.home.Content
-import tg.crsandroid.carpool.presentation.screens.login.ProfileScreen
+import tg.crsandroid.carpool.presentation.screens.ride.RideListScreen
+import tg.crsandroid.carpool.service.FirestoreService
 
 class DashActivity : ComponentActivity() {
     // Firebase and Authentication properties
     private val db = Firebase.firestore
+    val idx: String = FirestoreService.currentUser.id!!
+    lateinit var idy: String;
    //  private val authManager = FirebaseAuthManager()
     private lateinit var googleSignInClient: GoogleSignInClient
 
@@ -49,17 +51,27 @@ class DashActivity : ComponentActivity() {
                 Log.i("Dash", "Not initilized")
             }
             composable("Chat") {
-                 ChatScreen(navController, "1", "3")
+                idy = FirestoreService.idY!!
+                ChatScreen(navController, idx, idy)
+                Log.i("Dash", "Not initialized")
+            }
+            composable("ChatHome") {
+                ChatHomeScreen(idx, navController)
                 Log.i("Dash", "Not initilized")
             }
             composable("Profil") {
-                ProfileScreen(navController)
-                Log.i("Dash", "Not initilized")
+                // ProfileScreen(navController)
+                // Log.i("Dash", "Not initilized")
             }
             composable("listeTrajets") {
+                RideListScreen(onBackPressed = {
+                    navController.popBackStack()
+                }, navController
+                )
                 Log.i("Dash", "Not initilized")
             }
         }
     }
+
 }
 

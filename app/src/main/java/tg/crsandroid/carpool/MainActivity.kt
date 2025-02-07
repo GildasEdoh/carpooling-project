@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.presentation.screens.home.HomePage
-import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
 import tg.crsandroid.carpool.service.FirestoreService.trajets
@@ -48,7 +47,7 @@ class MainActivity : ComponentActivity() {
         initializeGoogleSignIn()
 
         setContent {
-            //AppContent()
+            AppContent()
             // Initialiser FusedLocationProviderClient
             // Démarrer les mises à jour de localisation
 //             HomeScreen(
@@ -62,7 +61,7 @@ class MainActivity : ComponentActivity() {
 ////                longitude = longitude,
 ////                latitude = latitude,
 //            )
-            startDashBoard()
+            // startDashBoard()
         }
     }
 
@@ -123,7 +122,7 @@ class MainActivity : ComponentActivity() {
                         startDashBoard()
                         showToast(context, "Connexion réussie : ${it.displayName}")
                     } else {
-                        startDashBoard()
+                        // startDashBoard()
                         showToast(context, "Erreur : $error")
                     }
                 }
@@ -151,13 +150,6 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    private fun navigateToRideList() {
-        Intent(this, RideListActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(this)
-            finish() //
-        }
-    }
 
     private fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

@@ -5,4 +5,5 @@ sealed class NavigationRoute(val route: String) {
     object History : NavigationRoute("History")
     object Profile : NavigationRoute("Profile")
     object Chat : NavigationRoute("Chat")
+    object RideList : NavigationRoute("RideList")
 }

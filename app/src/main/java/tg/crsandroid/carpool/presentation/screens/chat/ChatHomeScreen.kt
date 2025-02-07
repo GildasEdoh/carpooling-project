@@ -37,7 +37,7 @@ fun ChatHomeScreen(userIdX: String, navController: NavController) {
                 items(chats) { chat ->
                     ChatItem(chat = chat, userIdX = userIdX, onClick = {
                         // Naviguer vers le ChatScreen correspondant
-                        navController.navigate("chatScreen/${chat.user1}/${chat.user2}")
+                        navController.navigate("Chat")
                     })
                 }
             }

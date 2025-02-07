@@ -20,6 +20,7 @@ object FirestoreService {
     val scope = CoroutineScope(Dispatchers.IO)
     var currentUser :Utilisateur = Utilisateur()
     var trajets: List<Trajet>? = null
+    var idY: String? = null
 }
 
 object userDetails {

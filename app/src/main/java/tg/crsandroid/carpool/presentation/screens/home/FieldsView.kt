@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
 import tg.crsandroid.carpool.model.Trajet
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.userDetails
@@ -31,7 +32,7 @@ class FieldsView {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RideOptionsCardPassenger() {
+fun RideOptionsCardPassenger(navController: NavController) {
     var selectedIndex by remember { mutableIntStateOf(0) }
     var depart by remember { mutableStateOf("") }
     var arrivee by remember { mutableStateOf("") }
@@ -266,7 +267,7 @@ fun RideOptionsCardPassenger() {
 
                             }*/
                         }
-                        DisplayRideList()
+                        DisplayRideList(navController)
                         startRides = false
                     }
                 }

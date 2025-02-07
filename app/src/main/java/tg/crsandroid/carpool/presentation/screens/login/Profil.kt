@@ -1,5 +1,6 @@
 package tg.crsandroid.carpool.presentation.screens.login
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -69,12 +70,12 @@ fun ProfileScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
             Button(
                 onClick = {
-                    auth.signOut()
-                    navController.navigate("login") {
+                    //auth.signOut()
+                    /*navController.navigate("login") {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
-                    }
+                    }*/
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4169E1))
             ) {

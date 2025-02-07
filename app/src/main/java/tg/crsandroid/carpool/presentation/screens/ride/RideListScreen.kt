@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.model.Reservation
@@ -35,7 +36,7 @@ import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.userDetails
 import tg.crsandroid.carpool.utils.findNearbyDrivers
 import java.time.LocalDate
-
+/*
 class RideListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,12 +54,13 @@ class RideListActivity : ComponentActivity() {
             }
         }
     }
-}
+}*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RideListScreen(
     onBackPressed: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     var selectedTrajet by remember { mutableStateOf<Trajet?>(null) }
@@ -138,6 +140,7 @@ fun RideListScreen(
                     TrajetCard(
                         trajet = trajet,
                         isExpanded = isExpanded,
+                        navController = navController,
                         onInfoClick = { isExpanded = !isExpanded },
                         onReservationClick = { selectedTrajet = trajet }
                     )
@@ -166,6 +169,7 @@ fun RideListScreen(
 private fun TrajetCard(
     trajet: Trajet,
     isExpanded: Boolean,
+    navController: NavController,
     onInfoClick: () -> Unit,
     onReservationClick: (Trajet) -> Unit
 ) {
@@ -254,6 +258,17 @@ private fun TrajetCard(
                             icon = Icons.Default.AccountCircle,
                             title = "Places",
                             value = trajet.nbrSeats
+                        )
+
+                        InfoItem(
+                            icon = Icons.Default.Message,
+                            title = "Contacter",
+                            value = ".....",
+                            onClick = {
+                                FirestoreService.idY = trajet.idConducteur
+                                startChat(navController)
+                                Log.i("RideList", "Contacter le conducteur")
+                            }
                         )
                     }
 
@@ -412,5 +427,12 @@ private suspend fun getAllTrajets(): List<Trajet> {
         FirestoreService.ridesRepo.getAllDocuments()
     } catch (e: Exception) {
         emptyList()
+    }
+}
+
+private fun startChat(navController: NavController) {
+    navController.navigate("Chat") {
+        popUpTo(navController.graph.startDestinationId)
+        launchSingleTop = true
     }
 }

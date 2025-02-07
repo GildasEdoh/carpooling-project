@@ -27,7 +27,7 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(navCController: NavController, userIdX: String?, userIdY: String?) {
+fun ChatScreen(navController: NavController, userIdX: String?, userIdY: String?) {
     val db = FirebaseFirestore.getInstance()
     val messagesCollection = db.collection("c")
     var messages by remember { mutableStateOf<List<Message>>(emptyList()) }

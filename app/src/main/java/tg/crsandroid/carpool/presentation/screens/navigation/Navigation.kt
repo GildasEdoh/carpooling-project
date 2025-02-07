@@ -76,7 +76,7 @@ fun BottomNavigationBar(navController: NavController) {
                 isSelected = selectedIndex == 2,
                 onClick = {
                     selectedIndex = 2
-                    navController.navigate("Chat") {
+                    navController.navigate("ChatHome") {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
                     }
