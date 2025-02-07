@@ -34,9 +34,9 @@ import tg.crsandroid.carpool.service.userDetails
 
 class MainActivity : ComponentActivity() {
     // Firebase and Authentication properties
-    private val db = Firebase.firestore
-    private val authManager = FirebaseAuthManager()
-    private lateinit var googleSignInClient: GoogleSignInClient
+    val db = Firebase.firestore
+    val authManager = FirebaseAuthManager()
+    lateinit var googleSignInClient: GoogleSignInClient
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,7 +122,6 @@ class MainActivity : ComponentActivity() {
                         showToast(context, "Connexion réussie : ${it.displayName}")
                     } else {
                         startDashBoard()
-
                         showToast(context, "Erreur : $error")
                     }
                 }

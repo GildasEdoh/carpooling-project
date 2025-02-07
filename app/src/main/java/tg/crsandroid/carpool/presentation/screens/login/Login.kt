@@ -32,12 +32,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tg.crsandroid.carpool.R
+import tg.crsandroid.carpool.manager.FirebaseAuthManager
+import tg.crsandroid.carpool.service.ConnexionService
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 @Composable
-fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit, onGoogleLoginClick: () -> Unit) {
+fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit, onGoogleLoginClick: () -> Unit,
+) {
     var login by remember { mutableIntStateOf(0) }
-
     Box(
         modifier = Modifier
             .fillMaxSize()

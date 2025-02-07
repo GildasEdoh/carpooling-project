@@ -1,5 +1,7 @@
 package tg.crsandroid.carpool.presentation.screens.Login
 
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,19 +22,28 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import tg.crsandroid.carpool.DashActivity
 import tg.crsandroid.carpool.R
+import tg.crsandroid.carpool.manager.FirebaseAuthManager
+import tg.crsandroid.carpool.service.ConnexionService
+import tg.crsandroid.carpool.service.FirestoreService
+import tg.crsandroid.carpool.service.FirestoreService.scope
 
 
 @Composable
-fun SignInScreen(onNavigateToSignUp: () -> Unit={}) {
+fun SignInScreen(onNavigateToSignUp: () -> Unit={},onLoginSuccess: () -> Unit, viewModel: FirebaseAuthManager = FirebaseAuthManager()) {
     // États pour les champs de texte
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     // État pour afficher/masquer le mot de passe
     var isPasswordVisible by remember{ mutableStateOf(false)}
+    var errorMessage by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -61,7 +72,7 @@ fun SignInScreen(onNavigateToSignUp: () -> Unit={}) {
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Nom d'utilisateur") },
+            label = { Text("UserName") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             leadingIcon ={
@@ -100,10 +111,30 @@ fun SignInScreen(onNavigateToSignUp: () -> Unit={}) {
             Text("Mot de passe oublié ?", color = Color.Blue)
         }
         Spacer(modifier = Modifier.height(16.dp))
-
+        
+        // Affichage des erreurs
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                fontSize = 14.sp
+            )
+        }
         // Bouton Se connecter
         Button(
-            onClick = { /* Logique de connexion */ },
+            onClick = {
+                checkUserCredentials(FirestoreService.scope, username, password) { isSucces ->
+                    if (isSucces) {
+                        // val context = LocalContext.current // Obtenez le contexte actuel
+                        //val intent = Intent(context, DashActivity::class.java).apply {
+                            // putExtra("USERNAME", username)
+                        //}
+                        // context.startActivity(intent)
+                    } else {
+                        // Toast.makeText(LocalContext.current, "Identifiants incorrects", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Blue,
@@ -140,7 +171,9 @@ fun SignInScreen(onNavigateToSignUp: () -> Unit={}) {
 
         // Bouton Google
         LoginWithGoogle (onGoogleLoginClick = {
-
+            viewModel.loginWithGoogle(ConnexionService.Conn.ID_CLIENT, onLoginSuccess) {
+                errorMessage = it
+            }
         })
 
         // Lien vers la page d'inscription
@@ -150,8 +183,44 @@ fun SignInScreen(onNavigateToSignUp: () -> Unit={}) {
     }
 }
 
+private fun checkUserCredentials(
+    scope: CoroutineScope,
+    email: String,
+    pass: String,
+    callback: (Boolean) -> Unit
+) {
+    executeSuspendFunction(scope, callback) {
+        // Appel au repository pour vérifier l'utilisateur par email
+        FirestoreService.usersRepo.getUserByEmail(email)?.let { user ->
+            // Vérifiez si le mot de passe correspond (exemple simplifié)
+            user.motDePasse == pass
+        } ?: false // Retourne false si l'utilisateur n'existe pas
+    }
+}
+
+private fun executeSuspendFunction(
+    scope: CoroutineScope,
+    callback: (Boolean) -> Unit,
+    suspendFunction: suspend () -> Boolean
+) {
+    scope.launch {
+        try {
+            // Exécute la fonction suspendue et passe le résultat au callback
+            val result = suspendFunction()
+            callback(result)
+        } catch (e: Exception) {
+            // Log l'erreur et appelle le callback avec false en cas d'erreur
+            e.printStackTrace()
+            callback(false)
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewSignInScreen() {
-    SignInScreen(onNavigateToSignUp = {})
+    /*SignInScreen(
+        onNavigateToSignUp = {},
+        onLoginSuccess = TODO()
+    )*/
 }

@@ -93,4 +93,15 @@ class UserRepo : BaseRepository<Utilisateur>("users", Utilisateur::class.java) {
             null
         }
     }
+    suspend fun getUserByEmail(email: String): Utilisateur? { // drivers
+        return try {
+            val documentSnapshot = firestore.collection(collectionName)
+                .document(email)
+                .get()
+                .await()
+            documentSnapshot.toObject(modelClass)
+        } catch (e: Exception) {
+            null
+        }
+    }
 }

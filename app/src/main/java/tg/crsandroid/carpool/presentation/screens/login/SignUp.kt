@@ -1,4 +1,5 @@
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,10 +23,16 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.carpooling_project.model.Utilisateur
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.R
+import tg.crsandroid.carpool.manager.FirebaseAuthManager
+import tg.crsandroid.carpool.service.FirestoreService
+import tg.crsandroid.carpool.service.FirestoreService.scope
 
 @Composable
-fun SignUpScreen(onNavigateToSignIn: () -> Unit) {
+fun SignUpScreen(onNavigateToSignIn: () -> Unit, viewModel: FirebaseAuthManager = FirebaseAuthManager()) {
     // États pour les champs de texte
     var username by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
@@ -127,7 +134,22 @@ fun SignUpScreen(onNavigateToSignIn: () -> Unit) {
 
         // Bouton S'inscrire
         Button(
-            onClick = { /* Logique d'inscription */ },
+            onClick = {
+                val userData = Utilisateur(
+                    id = "",
+                    nom = firstName,
+                    prenom = lastName,
+                    motDePasse = password
+                )
+                FirestoreService.currentUser = userData
+                save(userData) { isSuccess ->
+                    if (isSuccess) {
+                        Log.i("Main", "Utilisateur ajouté")
+                    } else {
+                        Log.i("Main", "Utilisateur  non ajouté")
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Blue,
@@ -151,3 +173,15 @@ fun SignUpScreen(onNavigateToSignIn: () -> Unit) {
 fun PreviewSignUpScreen() {
     SignUpScreen(onNavigateToSignIn = {})
 }
+private fun save(user:Utilisateur, callback: (Boolean) -> Unit) {
+    launchSuspendFunction(scope, callback) {
+        FirestoreService.usersRepo.addUser(user)
+    }
+}
+fun launchSuspendFunction(scope: CoroutineScope, callback: (Boolean) -> Unit, suspendFunction: suspend () -> Boolean) {
+    scope.launch {
+        val result = suspendFunction()
+        callback(result)
+    }
+}
+

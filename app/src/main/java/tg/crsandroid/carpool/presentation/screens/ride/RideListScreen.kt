@@ -383,10 +383,13 @@ private fun ConfirmationDialog(
 }
 
 private fun reserverTrajet(trajet: Trajet) {
+    val passengers : List<String> = emptyList()
     val reservation = Reservation (
-        idConducteur = FirestoreService.currentUser.id!!,
+        idConducteur = trajet.idConducteur,
         date = LocalDate.now().toString(),
-        idTrajet = trajet.id
+        idTrajet = trajet.id,
+        idPassagers = FirestoreService.currentUser.id!!,
+        trajet = trajet
     )
 }
 
