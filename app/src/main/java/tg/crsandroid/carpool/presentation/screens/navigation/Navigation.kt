@@ -33,8 +33,8 @@ fun BottomNavigationBar(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(Color(0xFF001AB7)),
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFF3C52C5)),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -76,7 +76,7 @@ fun BottomNavigationBar(navController: NavController) {
                 isSelected = selectedIndex == 2,
                 onClick = {
                     selectedIndex = 2
-                    navController.navigate("Chat") {
+                    navController.navigate("ChatHome") {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
                     }

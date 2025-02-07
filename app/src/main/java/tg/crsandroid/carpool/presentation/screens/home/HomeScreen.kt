@@ -96,7 +96,7 @@ fun Content(navController: NavController) {
                     indication = null
                 ) { }
         ) {
-            RideOptionsCardPassenger()
+            RideOptionsCardPassenger(navController)
         }
 
         // Bottom Navigation Bar

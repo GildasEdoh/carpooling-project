@@ -36,13 +36,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.DashActivity
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.model.Reservation
 import tg.crsandroid.carpool.model.Trajet
-import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
 import java.time.LocalDate
@@ -159,8 +159,12 @@ fun createTrajet(trajet: Trajet, callback: (Boolean) -> Unit) {
 
 // Passer a l'affichage de la liste des trajets
 @Composable
-fun DisplayRideList() {
-    val context = LocalContext.current
+fun DisplayRideList(navController: NavController) {
+    /*val context = LocalContext.current
     val intent = Intent(context, RideListActivity::class.java)
-    context.startActivity(intent)
+    context.startActivity(intent)*/
+    navController.navigate("listeTrajets") {
+        popUpTo(navController.graph.startDestinationId)
+        launchSingleTop = true
+    }
 }

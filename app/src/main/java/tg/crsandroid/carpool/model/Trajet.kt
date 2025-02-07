@@ -1,5 +1,7 @@
 package tg.crsandroid.carpool.model
 
+import com.google.android.gms.maps.model.LatLng
+
 data class Trajet(
     var id: String = "",
     var lieuDepart: String = "",
@@ -11,6 +13,8 @@ data class Trajet(
     val idConducteur: String = "",
     var reservations: List<String> = mutableListOf(),
     val prix: String = "",
+    val lattitute: Double = 0.0,
+    val longitude: Double = 0.0
 //    val passagers: Any
 ) {
     companion object {

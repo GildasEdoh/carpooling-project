@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,14 +27,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import com.example.carpooling_project.model.Utilisateur
+import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.model.Reservation
 import tg.crsandroid.carpool.model.Trajet
 import tg.crsandroid.carpool.service.FirestoreService
+import tg.crsandroid.carpool.service.userDetails
+import tg.crsandroid.carpool.utils.findNearbyDrivers
 import java.time.LocalDate
-
-
+/*
 class RideListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +44,7 @@ class RideListActivity : ComponentActivity() {
             MaterialTheme(
                 colorScheme = lightColorScheme(
                     primary = Color(0xFF3C52C5),
-                    secondary = Color(0xFF2F42AF),
+                    secondary = Color(0xFF3C52C5),
                     surface = Color(0xFFFFFFFF)
                 )
             ) {
@@ -51,17 +54,32 @@ class RideListActivity : ComponentActivity() {
             }
         }
     }
-}
+}*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RideListScreen(
     onBackPressed: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val trajets = remember { generateSampleTrajets() }
     var selectedTrajet by remember { mutableStateOf<Trajet?>(null) }
-    val conducteurs = emptyList<Utilisateur>()
+    var trajets by remember { mutableStateOf<List<Trajet>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        isLoading = true
+        try {
+            trajets = getAllTrajets()
+            Log.i("SUCCESS", "Data fetched successfully")
+        } catch (e: Exception) {
+            Log.e("ERROR", "Error fetching data", e)
+            trajets = emptyList()
+        }
+        isLoading = false
+    }
 
     Scaffold(
         topBar = {
@@ -80,11 +98,10 @@ fun RideListScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Retour",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                     }
                 },
-
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                     titleContentColor = MaterialTheme.colorScheme.primary
@@ -100,12 +117,36 @@ fun RideListScreen(
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             item { Spacer(modifier = Modifier.height(8.dp)) }
-            items(trajets) { trajet ->
-                TrajetCard(
-                    trajet = trajet,
-                    onReservationClick = { selectedTrajet = it }
-                )
+
+            if (isLoading) {
+                Log.i("LISTE_____", "Chargement en cours")
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center) // Center l'indicateur
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            } else {
+                Log.i("LISTE_____", "Chargement fini: " + trajets.size)
+                if (userDetails.userDestination != null) {
+                    val near = findNearbyDrivers(userDetails.userLocation!!, userDetails.userDestination!!, trajets, 5.0)
+                    Log.i("RideList", "Near : ${near}")
+                }
+                items(trajets) { trajet ->
+                    var isExpanded by remember { mutableStateOf(false) }
+                    TrajetCard(
+                        trajet = trajet,
+                        isExpanded = isExpanded,
+                        navController = navController,
+                        onInfoClick = { isExpanded = !isExpanded },
+                        onReservationClick = { selectedTrajet = trajet }
+                    )
+                }
             }
+
             item { Spacer(modifier = Modifier.height(8.dp)) }
         }
     }
@@ -115,8 +156,10 @@ fun RideListScreen(
             trajet = trajet,
             onDismiss = { selectedTrajet = null },
             onConfirm = {
-//                reserverTrajet(trajet)
-                selectedTrajet = null
+                coroutineScope.launch {
+                    reserverTrajet(trajet)
+                    selectedTrajet = null
+                }
             }
         )
     }
@@ -125,6 +168,9 @@ fun RideListScreen(
 @Composable
 private fun TrajetCard(
     trajet: Trajet,
+    isExpanded: Boolean,
+    navController: NavController,
+    onInfoClick: () -> Unit,
     onReservationClick: (Trajet) -> Unit
 ) {
     Card(
@@ -144,109 +190,129 @@ private fun TrajetCard(
             // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(
-                    imageVector = Icons.Default.ShoppingCart,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
-                )
-                Column {
-                    Text(
-                        text = "${trajet.lieuDepart} - ${trajet.lieuArrivee}",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontFamily = FontFamily(Font(R.font.poppins_semibold)),
-                        fontSize = 18.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
                     )
-                    Text(
-                        text = "Trajet direct • ${trajet.duree}",
-                        style = MaterialTheme.typography.bodyMedium,
-//                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        fontFamily = FontFamily(Font(R.font.poppins_regular))
-                    )
-                }
-            }
-
-            Divider(color = Color(0xFFEEEEEE), thickness = 2.dp)
-
-            // Details
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                InfoItem(
-                    icon = Icons.Default.AccountCircle,
-                    title = "Conducteur",
-                    value = "EDOH"
-                )
-                InfoItem(
-                    icon = Icons.Default.DateRange,
-                    title = "Départ",
-                    value = trajet.heureDepart
-                )
-                InfoItem(
-                    icon = Icons.Default.CheckCircle,
-                    title = "Arrivée",
-                    value = trajet.heureArrivee
-                )
-                InfoItem(
-                    icon = Icons.Default.AccountCircle,
-                    title = "Places",
-                    value = trajet.nbrSeats
-                )
-                InfoItem(
-                    icon = Icons.Default.Info,
-                    title = "Infos",
-                    value = "",
-                    onClick = {
-                        Log.i("RIDELIST", "Liste ride")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        Text(
+                            text = "${trajet.lieuDepart} - ${trajet.lieuArrivee}",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontFamily = FontFamily(Font(R.font.poppins_semibold)),
+                            fontSize = 18.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = "Trajet direct • ${trajet.duree}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            fontFamily = FontFamily(Font(R.font.poppins_regular))
+                        )
                     }
-                )
-            }
-
-            // Price & Button
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        text = "Prix par place",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                    Text(
-                        text = "${trajet.prix} FCFA",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontFamily = FontFamily(Font(R.font.poppins_bold))
+                }
+                IconButton(onClick = onInfoClick) {
+                    Icon(
+                        imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.Info,
+                        contentDescription = if (isExpanded) "Réduire" else "Infos",
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
+            }
 
-                Button(
-                    onClick = { onReservationClick(trajet) },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 4.dp,
-                        pressedElevation = 8.dp
-                    )
+            AnimatedVisibility(visible = isExpanded) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = "Réserver",
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_semibold)),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                    Divider(color = Color(0xFFEEEEEE), thickness = 2.dp)
+
+                    // Details
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        InfoItem(
+                            icon = Icons.Default.AccountCircle,
+                            title = "Conducteur",
+                            value = "EDOH"
+                        )
+                        InfoItem(
+                            icon = Icons.Default.DateRange,
+                            title = "Départ",
+                            value = trajet.heureDepart
+                        )
+                        InfoItem(
+                            icon = Icons.Default.CheckCircle,
+                            title = "Arrivée",
+                            value = trajet.heureArrivee
+                        )
+                        InfoItem(
+                            icon = Icons.Default.AccountCircle,
+                            title = "Places",
+                            value = trajet.nbrSeats
+                        )
+
+                        InfoItem(
+                            icon = Icons.Default.Message,
+                            title = "Contacter",
+                            value = ".....",
+                            onClick = {
+                                FirestoreService.idY = trajet.idConducteur
+                                startChat(navController)
+                                Log.i("RideList", "Contacter le conducteur")
+                            }
+                        )
+                    }
+
+                    // Price & Button
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(
+                                text = "Prix par place",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                            )
+                            Text(
+                                text = "${trajet.prix} FCFA",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontFamily = FontFamily(Font(R.font.poppins_bold))
+                            )
+                        }
+
+                        Button(
+                            onClick = { onReservationClick(trajet) },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color.White
+                            ),
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 4.dp,
+                                pressedElevation = 8.dp
+                            )
+                        ) {
+                            Text(
+                                text = "Réserver",
+                                fontSize = 18.sp,
+                                fontFamily = FontFamily(Font(R.font.poppins_semibold)),
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -265,8 +331,9 @@ private fun InfoItem(
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.size(24.dp)
-                .clickable { onClick() } // Ajout de l'écouteur de clic
+            modifier = Modifier
+                .size(24.dp)
+                .clickable { onClick() }
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -290,9 +357,9 @@ private fun ConfirmationDialog(
     onConfirm: () -> Unit
 ) {
     AlertDialog(
-    onDismissRequest = onDismiss,
-    modifier = Modifier.padding(24.dp),
-    properties = DialogProperties(usePlatformDefaultWidth = false)
+        onDismissRequest = onDismiss,
+        modifier = Modifier.padding(24.dp),
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Column(
             modifier = Modifier
@@ -344,122 +411,28 @@ private fun ConfirmationDialog(
 }
 
 private fun reserverTrajet(trajet: Trajet) {
+    val passengers : List<String> = emptyList()
     val reservation = Reservation(
         idConducteur = FirestoreService.currentUser.id!!,
         date = LocalDate.now().toString(),
-        idTrajet = trajet.id
+        idTrajet = trajet.id,
+        idPassagers = FirestoreService.currentUser.id!!,
+        trajet = trajet
     )
+    // FirestoreService.reservationRepo.addDocument(reservation)
 }
 
-private fun generateSampleTrajets(): List<Trajet> {
-    return listOf(
-        Trajet(
-            lieuDepart = "Lomé",
-            lieuArrivee = "Kara",
-            heureDepart = "08:00",
-            heureArrivee = "12:00",
-            duree = "4h",
-            prix = 5000.toString(),
-            nbrSeats = 3.toString(),
-            idConducteur = "G"
-        ),
-        Trajet(
-            lieuDepart = "Lomé",
-            lieuArrivee = "Atakpamé",
-            heureDepart = "09:00",
-            heureArrivee = "11:00",
-            duree = "2h",
-            prix = 3000.toString(),
-            nbrSeats = 2.toString()
-        ),
-        Trajet(
-            lieuDepart = "Lomé",
-            lieuArrivee = "Aného",
-            heureDepart = "10:00",
-            heureArrivee = "11:30",
-            duree = "1h30",
-            prix = 2000.toString(),
-            nbrSeats = 1.toString(),
-            idConducteur = "G"
-        )
-    )
+private suspend fun getAllTrajets(): List<Trajet> {
+    return try {
+        FirestoreService.ridesRepo.getAllDocuments()
+    } catch (e: Exception) {
+        emptyList()
+    }
 }
-//@Composable
-//fun RideListContent(modifier: Modifier = Modifier, padding: PaddingValues) {
-//    val trajets = remember { generateSampleTrajets() }
-//    val context = LocalContext.current
-//    val (rayon, setRayon) = remember { mutableStateOf(0) }
-//    val (prix, setPrix) = remember { mutableStateOf(0) }
-//    val (places, setPlaces) = remember { mutableStateOf(0) }
-//
-//    Column(modifier = modifier.padding(padding)) {
-//        FilterOptions(
-//            rayon = rayon,
-//            onRayonChange = setRayon,
-//            prix = prix,
-//            onPrixChange = setPrix,
-//            places = places,
-//            onPlacesChange = setPlaces
-//        )
-//        Text(
-//            text = "Nombre de trajets retrouvés: ${trajets.size}",
-//            style = MaterialTheme.typography.bodyLarge,
-//            modifier = Modifier.padding(16.dp)
-//        )
-//        Spacer(modifier = Modifier.height(8.dp))
-//        LazyColumn(
-//            modifier = modifier
-//                .fillMaxSize()
-//                .padding(horizontal = 16.dp),
-//            verticalArrangement = Arrangement.spacedBy(15.dp)
-//        ) {
-//            item { Spacer(modifier = Modifier.height(8.dp)) }
-//            items(trajets) { trajet ->
-//                TrajetCard(
-//                    onReservationClick = TODO(),
-//                    trajet = trajet,
-////                    onReservationClick = { selectedTrajet = it }
-//                )
-//            }
-//            item { Spacer(modifier = Modifier.height(8.dp)) }
-//        }
-//    }
-//}
-//
-//@Composable
-//fun FilterOptions(
-//    rayon: Int,
-//    onRayonChange: (Int) -> Unit,
-//    prix: Int,
-//    onPrixChange: (Int) -> Unit,
-//    places: Int,
-//    onPlacesChange: (Int) -> Unit
-//) {
-//    Column {
-//        Text("Filter Options", style = MaterialTheme.typography.bodySmall)
-//        Spacer(modifier = Modifier.height(8.dp))
-//        // Rayon filter
-//        Text("Rayon: $rayon km")
-//        Slider(
-//            value = rayon.toFloat(),
-//            onValueChange = { onRayonChange(it.toInt()) },
-//            valueRange = 0f..100f
-//        )
-//        Spacer(modifier = Modifier.height(8.dp))
-//        // Prix filter
-//        Text("Prix: $prix FCFA")
-//        Slider(
-//            value = prix.toFloat(),
-//            onValueChange = { onPrixChange(it.toInt()) },
-//            valueRange = 0f..10000f
-//        )
-//        Spacer(modifier = Modifier.height(8.dp))
-//        // Places filter
-//        Text("Places: $places")
-//        Slider(
-//            value = places.toFloat(),
-//            onValueChange = { onPlacesChange(it.toInt()) },
-//            valueRange = 0f..10f
-//        )
-//    }
-//}
+
+private fun startChat(navController: NavController) {
+    navController.navigate("Chat") {
+        popUpTo(navController.graph.startDestinationId)
+        launchSingleTop = true
+    }
+}

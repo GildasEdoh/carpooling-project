@@ -24,19 +24,19 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
-import tg.crsandroid.carpool.presentation.screens.home.HomeScreen
-import tg.crsandroid.carpool.presentation.screens.ride.RideListActivity
+import tg.crsandroid.carpool.presentation.screens.home.HomePage
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
+import tg.crsandroid.carpool.service.FirestoreService.trajets
+import tg.crsandroid.carpool.service.userDetails
 
 class MainActivity : ComponentActivity() {
     // Firebase and Authentication properties
-    private val db = Firebase.firestore
-    private val authManager = FirebaseAuthManager()
-    private lateinit var googleSignInClient: GoogleSignInClient
+    val db = Firebase.firestore
+    val authManager = FirebaseAuthManager()
+    lateinit var googleSignInClient: GoogleSignInClient
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +50,9 @@ class MainActivity : ComponentActivity() {
             AppContent()
             // Initialiser FusedLocationProviderClient
             // Démarrer les mises à jour de localisation
-            // HomeScreen()
+//             HomeScreen(
+//                 navController = { /*TODO()*/ }
+//             )
 //            startLocationUpdates()
 //            MapScreen(
 //                modifier = Modifier
@@ -59,6 +61,7 @@ class MainActivity : ComponentActivity() {
 ////                longitude = longitude,
 ////                latitude = latitude,
 //            )
+            // startDashBoard()
         }
     }
 
@@ -74,10 +77,10 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun AppContent() {
         val context = LocalContext.current
-
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { result ->
+            Log.i("MAIN", "result code ${result.resultCode}" +"RESULT_OK" + RESULT_OK)
             if (result.resultCode == RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 handleSignInResult(context, task)
@@ -119,6 +122,7 @@ class MainActivity : ComponentActivity() {
                         startDashBoard()
                         showToast(context, "Connexion réussie : ${it.displayName}")
                     } else {
+                        // startDashBoard()
                         showToast(context, "Erreur : $error")
                     }
                 }
@@ -143,15 +147,9 @@ class MainActivity : ComponentActivity() {
                 Log.i("Main", "Utilisateur  non ajouté")
             }
         }
+
     }
 
-    private fun navigateToRideList() {
-        Intent(this, RideListActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(this)
-            finish() //
-        }
-    }
 
     private fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
