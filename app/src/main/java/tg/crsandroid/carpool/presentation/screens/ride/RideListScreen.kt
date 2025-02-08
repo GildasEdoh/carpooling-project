@@ -24,10 +24,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.model.Reservation
@@ -435,4 +437,15 @@ private fun startChat(navController: NavController) {
         popUpTo(navController.graph.startDestinationId)
         launchSingleTop = true
     }
+
+
+
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewRideListScreen() {
+    RideListScreen(
+        onBackPressed = {},
+        navController = rememberNavController()
+    )
 }
