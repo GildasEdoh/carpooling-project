@@ -1,5 +1,6 @@
 package tg.crsandroid.carpool.presentation.screens.chat
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +19,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.carpooling_project.model.Utilisateur
 import tg.crsandroid.carpool.model.Chat
+import tg.crsandroid.carpool.service.FirestoreService
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -91,7 +94,20 @@ fun ChatHomeScreen(userIdX: String, navController: NavController) {
 
 @Composable
 fun ChatItem(chat: Chat, userIdX: String, onClick: () -> Unit) {
-    val otherUserName = if (chat.user1 == userIdX) chat.user2 else chat.user1
+    var otherUserName = if (chat.user1 == userIdX) chat.user2 else chat.user1
+    var otherUser by remember { mutableStateOf<Utilisateur?>(null) } // Utilisation de mutableStateOf
+
+    LaunchedEffect(Unit) {
+        try {
+            val fetchedUser = getUserById(otherUserName)
+            if (fetchedUser != null) {
+                otherUser = fetchedUser // Déclenche la recomposition
+                Log.i("SUCCESS", "Data fetched successfully : ${fetchedUser.nom}")
+            }
+        } catch (e: Exception) {
+            Log.e("ERROR", "Error fetching data", e)
+        }
+    }
 
     Card(
         modifier = Modifier
@@ -115,7 +131,7 @@ fun ChatItem(chat: Chat, userIdX: String, onClick: () -> Unit) {
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = otherUserName,
+                    text = otherUser?.nom ?: "Chargement...",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -135,5 +151,13 @@ fun ChatItem(chat: Chat, userIdX: String, onClick: () -> Unit) {
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
+    }
+}
+
+private suspend fun getUserById(id: String) : Utilisateur? {
+    return try {
+        FirestoreService.usersRepo.getUserById(id)
+    } catch (e: Exception) {
+        null
     }
 }

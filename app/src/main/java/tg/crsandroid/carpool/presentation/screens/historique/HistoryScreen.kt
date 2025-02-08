@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import tg.crsandroid.carpool.R
 
 data class RideHistory(
@@ -28,7 +29,7 @@ data class RideHistory(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen(rides: List<RideHistory>, onBackClick: () -> Unit) {
+fun HistoryScreen(navController: NavController, rides: List<RideHistory>, onBackClick: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
 
         // En-tête
@@ -161,7 +162,7 @@ fun Status(status: String) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewHistoryScreen() {
-    val sampleRides = listOf(
+    /*val sampleRides = listOf(
         RideHistory("Jane Doe", 3.0,"In Progress..", "Atakpamé", "Dapaong"),
         RideHistory("Jane Doe", 3.0,"In Progress..", "Atakpamé", "Dapaong") ,
         RideHistory("John Doe", 4.5,"Completed", "Lomé", "Kara"),
@@ -172,5 +173,5 @@ fun PreviewHistoryScreen() {
     HistoryScreen(
         rides = sampleRides,
         onBackClick = {},
-    )
+    )*/
 }
