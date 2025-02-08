@@ -25,6 +25,9 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.DashActivity
@@ -36,14 +39,22 @@ import tg.crsandroid.carpool.service.FirestoreService.scope
 
 
 @Composable
-fun SignInScreen(onNavigateToSignUp: () -> Unit={},onLoginSuccess: () -> Unit, viewModel: FirebaseAuthManager = FirebaseAuthManager()) {
+fun SignInScreen(navController: NavController) {
     // États pour les champs de texte
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     // État pour afficher/masquer le mot de passe
     var isPasswordVisible by remember{ mutableStateOf(false)}
+
+    //Message d'erreur
     var errorMessage by remember { mutableStateOf("") }
+
+    // Contexte pour afficher des Toast
+    val context = LocalContext.current
+
+    // Firebase Authentication
+    val auth = Firebase.auth
 
     Column(
         modifier = Modifier
@@ -68,11 +79,11 @@ fun SignInScreen(onNavigateToSignUp: () -> Unit={},onLoginSuccess: () -> Unit, v
                 .padding(bottom = 16.dp)
         )
 
-        // Champ Nom d'utilisateur
+        // Champ Email
         OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("UserName") },
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             leadingIcon ={
@@ -120,20 +131,29 @@ fun SignInScreen(onNavigateToSignUp: () -> Unit={},onLoginSuccess: () -> Unit, v
                 fontSize = 14.sp
             )
         }
+
         // Bouton Se connecter
         Button(
             onClick = {
-                checkUserCredentials(FirestoreService.scope, username, password) { isSucces ->
-                    if (isSucces) {
-                        // val context = LocalContext.current // Obtenez le contexte actuel
-                        //val intent = Intent(context, DashActivity::class.java).apply {
-                            // putExtra("USERNAME", username)
-                        //}
-                        // context.startActivity(intent)
-                    } else {
-                        // Toast.makeText(LocalContext.current, "Identifiants incorrects", Toast.LENGTH_SHORT).show()
-                    }
+                if (email.isBlank() || password.isBlank()) {
+                    errorMessage = "Veuillez remplir tous les champs."
+                    return@Button
                 }
+
+                // Connexion avec Firebase
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task: Task<AuthResult> ->
+                        if (task.isSuccessful) {
+                            // Connexion réussie
+                            Toast.makeText(context, "Connexion réussie !", Toast.LENGTH_SHORT).show()
+                            navController.navigate("Home") // Naviguer vers l'écran principal
+                        } else {
+                            // Échec de la connexion
+                            errorMessage = task.exception?.message ?: "Erreur de connexion"
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -170,57 +190,15 @@ fun SignInScreen(onNavigateToSignUp: () -> Unit={},onLoginSuccess: () -> Unit, v
         Spacer(modifier = Modifier.height(16.dp))
 
         // Bouton Google
-        LoginWithGoogle (onGoogleLoginClick = {
-            viewModel.loginWithGoogle(ConnexionService.Conn.ID_CLIENT, onLoginSuccess) {
-                errorMessage = it
-            }
+        GoogleSignInButton(onSignInSuccess = {
+            navController.navigate("Home")
         })
 
         // Lien vers la page d'inscription
-        TextButton(onClick = onNavigateToSignUp) {
+        TextButton(onClick = {
+            navController.navigate("SignUp")
+        }) {
             Text("Pas encore inscrit ?  S'inscrire", color = Color.Blue)
         }
     }
-}
-
-private fun checkUserCredentials(
-    scope: CoroutineScope,
-    email: String,
-    pass: String,
-    callback: (Boolean) -> Unit
-) {
-    executeSuspendFunction(scope, callback) {
-        // Appel au repository pour vérifier l'utilisateur par email
-        FirestoreService.usersRepo.getUserByEmail(email)?.let { user ->
-            // Vérifiez si le mot de passe correspond (exemple simplifié)
-            user.motDePasse == pass
-        } ?: false // Retourne false si l'utilisateur n'existe pas
-    }
-}
-
-private fun executeSuspendFunction(
-    scope: CoroutineScope,
-    callback: (Boolean) -> Unit,
-    suspendFunction: suspend () -> Boolean
-) {
-    scope.launch {
-        try {
-            // Exécute la fonction suspendue et passe le résultat au callback
-            val result = suspendFunction()
-            callback(result)
-        } catch (e: Exception) {
-            // Log l'erreur et appelle le callback avec false en cas d'erreur
-            e.printStackTrace()
-            callback(false)
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewSignInScreen() {
-    /*SignInScreen(
-        onNavigateToSignUp = {},
-        onLoginSuccess = TODO()
-    )*/
 }
