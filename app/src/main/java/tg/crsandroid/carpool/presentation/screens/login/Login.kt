@@ -1,5 +1,7 @@
 package tg.crsandroid.carpool.presentation.screens.Login
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,20 +28,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.service.ConnexionService
 import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 @Composable
-fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit, onGoogleLoginClick: () -> Unit,
-) {
-    var login by remember { mutableIntStateOf(0) }
+fun LoginScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -72,9 +80,9 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
                 verticalArrangement = Arrangement.spacedBy(10.dp) // Moved here
             ) {
                 // Bouton de connexion avec Google
-                LoginWithGoogle(
-                    onGoogleLoginClick = onGoogleLoginClick
-                )
+                GoogleSignInButton(onSignInSuccess = {
+                    navController.navigate("Home")
+                })
 
                 // Row pour Login et Sign Up sur la même ligne
                 Row(
@@ -84,7 +92,7 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
                     // Bouton Login
                     Button(
                         onClick = {
-                            login = 1
+                            navController.navigate("SignIn")
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF001F7F)),
                         shape = RoundedCornerShape(8.dp),
@@ -105,8 +113,7 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
                     // Bouton Sign Up
                     Button(
                         onClick = {
-                            //
-                            login = 2
+                            navController.navigate("SignUp")
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF001F7F)),
                         shape = RoundedCornerShape(8.dp),
@@ -126,31 +133,43 @@ fun LoginScreen(onLoginClick: @Composable () -> Unit, onSignUpClick: () -> Unit,
             }
         }
     }
-    if (login == 1) { // Nav signIn
-        AppNavigation(login)
-    }
-    else if (login == 2) { // Nav to SignUp
-        AppNavigation(login)
-    }
 }
 
+
 @Composable
-fun LoginWithGoogle(onGoogleLoginClick: () -> Unit) {
-    Button(
-        onClick = onGoogleLoginClick,
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEFEFEF)),
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp) // Hauteur du bouton
-    ) {
-        Text(
-            text = "Login with Google",
-            fontWeight = FontWeight.Medium,
-            fontSize = 16.sp,
-            fontFamily = poppinsFontFamily,
-            color = Color.Gray
-        )
+fun GoogleSignInButton(onSignInSuccess: () -> Unit) {
+    val context = LocalContext.current
+    val auth = Firebase.auth
+
+    val signInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            auth.signInWithCredential(credential)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        onSignInSuccess()
+                    } else {
+                        // Handle failure
+                    }
+                }
+        } catch (e: ApiException) {
+            // Handle failure
+        }
+    }
+
+    Button(onClick = {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        val googleSignInClient = GoogleSignIn.getClient(context, gso)
+        signInLauncher.launch(googleSignInClient.signInIntent)
+    }) {
+        Text("Login with Google")
     }
 }
 

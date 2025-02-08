@@ -1,5 +1,6 @@
 package tg.crsandroid.carpool.presentation.screens.Login
 
+/*
 import SignUpScreen
 import android.os.Bundle
 import android.util.Log
@@ -34,11 +35,14 @@ import tg.crsandroid.carpool.manager.FirebaseAuthManager
             startDestination = signStart// Écran de départ
         ) {
             composable("login") {
-                SignInScreen(
-                    onNavigateToSignUp = {
+                LoginScreen(
+                    onLoginClick = {
+                        navController.navigate("signin")
+                    },
+                    onSignUpClick = {
                         navController.navigate("signup")
                     },
-                    onLoginSuccess = {  }
+                    onGoogleLoginClick = {}
                 )
             }
             composable("signup") { // Route pour l'écran d'inscription
@@ -58,3 +62,4 @@ import tg.crsandroid.carpool.manager.FirebaseAuthManager
             }
         }
     }
+*/

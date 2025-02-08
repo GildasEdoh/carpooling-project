@@ -89,7 +89,9 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        LoginScreen(
+        tg.crsandroid.carpool.presentation.screens.Login.LoginScreen(navController = rememberNavController())
+
+        /*LoginScreen(
             onLoginClick = {
                 // Handle email/password login here if needed
                 showToast(context, "Login clicked")
@@ -101,7 +103,7 @@ class MainActivity : ComponentActivity() {
             onGoogleLoginClick = {
                 startGoogleSignIn(launcher)
             }
-        )
+        )*/
     }
 
     private fun startGoogleSignIn(launcher: ActivityResultLauncher<Intent>) {

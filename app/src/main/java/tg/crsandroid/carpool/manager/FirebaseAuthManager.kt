@@ -38,13 +38,13 @@ class FirebaseAuthManager : ViewModel() {
         return googleSignInClient
     }
 
-    fun signInWithEmailAndPassword(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
+    fun signInWithEmailAndPassword(email: String, password: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    onResult(true, null)
+                    onSuccess()
                 } else {
-                    onResult(false, task.exception?.message)
+                    onFailure("Échec de connexion.")
                 }
 
             }

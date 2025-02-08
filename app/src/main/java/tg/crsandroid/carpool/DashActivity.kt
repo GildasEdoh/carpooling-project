@@ -14,6 +14,9 @@ import androidx.navigation.navArgument
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
+import tg.crsandroid.carpool.presentation.screens.Login.SignInScreen
+import tg.crsandroid.carpool.presentation.screens.SignUp.SignUpScreen
 import tg.crsandroid.carpool.presentation.screens.chat.ChatHomeScreen
 import tg.crsandroid.carpool.presentation.screens.chat.ChatScreen
 import tg.crsandroid.carpool.presentation.screens.home.Content
@@ -48,6 +51,15 @@ class DashActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = "Home") {
             composable("Home") {
                 Content(navController)
+            }
+            composable("Login") {
+                LoginScreen(navController)
+            }
+            composable("SignIn") {
+                SignInScreen(navController)
+            }
+            composable("SignUp") {
+                SignupScreen(navController)
             }
             composable("History") {
                 // HistoryScreen(navController)
