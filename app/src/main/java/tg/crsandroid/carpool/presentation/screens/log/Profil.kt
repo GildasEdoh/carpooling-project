@@ -1,4 +1,4 @@
-package tg.crsandroid.carpool.presentation.screens.login
+package tg.crsandroid.carpool.presentation.screens.log
 
 
 import androidx.compose.foundation.background
@@ -12,10 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -73,7 +71,7 @@ fun ProfileScreen(navController: NavController) {
             Button(
                 onClick = {
                     //auth.signOut()
-                    /*navController.navigate("login") {
+                    /*navController.navigate("log") {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }

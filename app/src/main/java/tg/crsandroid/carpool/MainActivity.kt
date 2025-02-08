@@ -1,5 +1,6 @@
 package tg.crsandroid.carpool
 
+import SignUpScreen
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +14,12 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.carpooling_project.model.Utilisateur
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -26,7 +33,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
+import tg.crsandroid.carpool.presentation.screens.Login.SignInScreen
+import tg.crsandroid.carpool.presentation.screens.chat.ChatHomeScreen
+import tg.crsandroid.carpool.presentation.screens.chat.ChatScreen
+import tg.crsandroid.carpool.presentation.screens.home.Content
 import tg.crsandroid.carpool.presentation.screens.home.HomePage
+import tg.crsandroid.carpool.presentation.screens.log.ProfileInterface
+import tg.crsandroid.carpool.presentation.screens.ride.RideListScreen
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
 import tg.crsandroid.carpool.service.FirestoreService.trajets
@@ -47,24 +60,21 @@ class MainActivity : ComponentActivity() {
         initializeGoogleSignIn()
 
         setContent {
-            AppContent()
-            // Initialiser FusedLocationProviderClient
-            // Démarrer les mises à jour de localisation
-//             HomeScreen(
-//                 navController = { /*TODO()*/ }
-//             )
-//            startLocationUpdates()
-//            MapScreen(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .fillMaxWidth(),
-////                longitude = longitude,
-////                latitude = latitude,
-//            )
-            // startDashBoard()
+            val navController = rememberNavController()
+
+            NavHost(navController = navController, startDestination = "Login") {
+                composable("Login") {
+                    AppContent(navController)
+                }
+                composable("SignIn") {
+                    SignInScreen(navController)
+                }
+                composable("SignUp") {
+                    SignUpScreen(navController)
+                }
+            }
         }
     }
-
     //initialisation de l'authentification par google
     private fun initializeGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -75,7 +85,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun AppContent() {
+    fun AppContent(navController: NavController) {
         val context = LocalContext.current
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
@@ -89,11 +99,11 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        tg.crsandroid.carpool.presentation.screens.Login.LoginScreen(navController = rememberNavController())
+        LoginScreen(navController)
 
         /*LoginScreen(
             onLoginClick = {
-                // Handle email/password login here if needed
+                // Handle email/password log here if needed
                 showToast(context, "Login clicked")
             },
             onSignUpClick = {

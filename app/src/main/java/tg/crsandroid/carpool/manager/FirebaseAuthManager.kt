@@ -124,7 +124,7 @@ class FirebaseAuthManager : ViewModel() {
                     if (task.isSuccessful) {
                         onSuccess()
                     } else {
-                        onError(task.exception?.message ?: "Google login failed")
+                        onError(task.exception?.message ?: "Google log failed")
                     }
                 }
         }

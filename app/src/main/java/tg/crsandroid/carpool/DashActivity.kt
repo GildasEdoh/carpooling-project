@@ -1,5 +1,6 @@
 package tg.crsandroid.carpool
 
+import SignUpScreen
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -16,11 +17,10 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.presentation.screens.Login.SignInScreen
-import tg.crsandroid.carpool.presentation.screens.SignUp.SignUpScreen
 import tg.crsandroid.carpool.presentation.screens.chat.ChatHomeScreen
 import tg.crsandroid.carpool.presentation.screens.chat.ChatScreen
 import tg.crsandroid.carpool.presentation.screens.home.Content
-import tg.crsandroid.carpool.presentation.screens.login.ProfileInterface
+import tg.crsandroid.carpool.presentation.screens.log.ProfileInterface
 import tg.crsandroid.carpool.presentation.screens.ride.RideListScreen
 import tg.crsandroid.carpool.service.FirestoreService
 
@@ -59,7 +59,7 @@ class DashActivity : ComponentActivity() {
                 SignInScreen(navController)
             }
             composable("SignUp") {
-                SignupScreen(navController)
+                SignUpScreen(navController)
             }
             composable("History") {
                 // HistoryScreen(navController)

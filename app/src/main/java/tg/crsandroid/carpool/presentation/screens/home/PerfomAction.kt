@@ -119,6 +119,7 @@ private fun ConfirmationDialog(
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
@@ -127,8 +128,8 @@ fun HomeScreenPreview() {
 }
 
 @Composable
-fun showDialogPanel(trajetToConfirm: Trajet, context: Context) {
-    var showDialog by remember { mutableStateOf(true) }
+fun showDialogPanel(trajetToConfirm: Trajet, context: Context, state: Boolean) : Boolean{
+    var showDialog by remember { mutableStateOf(state) }
     if (showDialog) {
         ConfirmationDialog(
             trajet = trajetToConfirm,
@@ -139,6 +140,7 @@ fun showDialogPanel(trajetToConfirm: Trajet, context: Context) {
             onConfirm = {
                 createTrajet(trajetToConfirm) { isSuccess ->
                     if (isSuccess) {
+                       // createTrajet(trajetToConfirm)
                         Log.i("RideOptionsCardPassenger", "Trajet créé avec succès")
                     } else {
                         Log.i("RideOptionsCardPassenger", "Erreur lors de la création du trajet")
@@ -149,8 +151,9 @@ fun showDialogPanel(trajetToConfirm: Trajet, context: Context) {
             }
         )
     }
-
+    return showDialog
 }
+
 fun createTrajet(trajet: Trajet, callback: (Boolean) -> Unit) {
     launchSuspendFunction(scope, callback) {
         FirestoreService.ridesRepo.addDocument(trajet)

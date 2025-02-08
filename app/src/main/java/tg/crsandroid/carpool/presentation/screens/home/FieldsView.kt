@@ -234,8 +234,6 @@ fun RideOptionsCardPassenger(navController: NavController) {
                             } else {
                                 startRides = true
                                 FirestoreService.currentUser.type = "Passager"
-
-
                             }
                         },
                         enabled = true,
@@ -253,7 +251,7 @@ fun RideOptionsCardPassenger(navController: NavController) {
                     Log.i("MMMMMMM", "Showpanel ${showDialog}, ${trajetToConfirm}")
                     if (showDialog && trajetToConfirm != null) {
                         showDialogPanel(trajetToConfirm!!, context)
-                        showDialog = false
+                        // showDialog = false
                     }
                     if (startRides) {
                         if (userDetails.userDestination != null) {

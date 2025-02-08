@@ -162,7 +162,6 @@ fun RideListScreen(
                     )
                 }
             }
-
             item { Spacer(modifier = Modifier.height(8.dp)) }
         }
     }

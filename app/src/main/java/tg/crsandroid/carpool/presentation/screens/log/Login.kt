@@ -1,5 +1,7 @@
 package tg.crsandroid.carpool.presentation.screens.Login
 
+import android.content.Context
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -41,6 +44,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import tg.crsandroid.carpool.DashActivity
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.service.ConnexionService
@@ -48,6 +52,7 @@ import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 @Composable
 fun LoginScreen(navController: NavController) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -81,7 +86,7 @@ fun LoginScreen(navController: NavController) {
             ) {
                 // Bouton de connexion avec Google
                 GoogleSignInButton(onSignInSuccess = {
-                    navController.navigate("Home")
+                    startDashBoard(context)
                 })
 
                 // Row pour Login et Sign Up sur la même ligne
@@ -161,15 +166,28 @@ fun GoogleSignInButton(onSignInSuccess: () -> Unit) {
         }
     }
 
-    Button(onClick = {
+    Button(
+        onClick = {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(context.getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         val googleSignInClient = GoogleSignIn.getClient(context, gso)
         signInLauncher.launch(googleSignInClient.signInIntent)
-    }) {
-        Text("Login with Google")
+    },
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEFEFEF)),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp) // Hauteur du bouton
+    ) {
+        Text(
+            text = "Login with Google",
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+            fontFamily = poppinsFontFamily,
+            color = Color.Gray
+        )
     }
 }
 
@@ -216,4 +234,8 @@ fun LoginPageImage() {
             )
         }
     }
+}
+private fun startDashBoard(context: Context) {
+    val intent = Intent(context, DashActivity::class.java)
+    context.startActivity(intent)
 }

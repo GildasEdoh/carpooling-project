@@ -34,7 +34,7 @@ import tg.crsandroid.carpool.manager.FirebaseAuthManager
             navController = navController,
             startDestination = signStart// Écran de départ
         ) {
-            composable("login") {
+            composable("log") {
                 LoginScreen(
                     onLoginClick = {
                         navController.navigate("signin")

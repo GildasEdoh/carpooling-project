@@ -1,10 +1,12 @@
 package tg.crsandroid.carpool.presentation.screens.Login
 
+import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -27,7 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.google.android.gms.tasks.Task
+import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.DashActivity
@@ -36,6 +40,7 @@ import tg.crsandroid.carpool.manager.FirebaseAuthManager
 import tg.crsandroid.carpool.service.ConnexionService
 import tg.crsandroid.carpool.service.FirestoreService
 import tg.crsandroid.carpool.service.FirestoreService.scope
+import tg.crsandroid.carpool.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -65,7 +70,7 @@ fun SignInScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text="login",
+            text="log",
             color=Color.Blue,
             fontSize = 45.sp,
             fontWeight = FontWeight.Bold
@@ -73,7 +78,7 @@ fun SignInScreen(navController: NavController) {
         // Image en haut
         Image(
             painter = painterResource(id = R.drawable.signup),
-            contentDescription = "image login",
+            contentDescription = "image log",
             modifier = Modifier
                 .size(240.dp)
                 .padding(bottom = 16.dp)
@@ -191,7 +196,7 @@ fun SignInScreen(navController: NavController) {
 
         // Bouton Google
         GoogleSignInButton(onSignInSuccess = {
-            navController.navigate("Home")
+            startDashBoard(context)
         })
 
         // Lien vers la page d'inscription
@@ -200,5 +205,28 @@ fun SignInScreen(navController: NavController) {
         }) {
             Text("Pas encore inscrit ?  S'inscrire", color = Color.Blue)
         }
+    }
+}
+private fun startDashBoard(context: Context) {
+    val intent = Intent(context, DashActivity::class.java)
+    context.startActivity(intent)
+}
+@Composable
+fun LoginWithGoogle(onGoogleLoginClick: () -> Unit) {
+    Button(
+        onClick = onGoogleLoginClick,
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEFEFEF)),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp) // Hauteur du bouton
+    ) {
+        Text(
+            text = "Login with Google",
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+            fontFamily = poppinsFontFamily,
+            color = Color.Gray
+        )
     }
 }
