@@ -250,7 +250,7 @@ fun RideOptionsCardPassenger(navController: NavController) {
 
                     Log.i("MMMMMMM", "Showpanel ${showDialog}, ${trajetToConfirm}")
                     if (showDialog && trajetToConfirm != null) {
-                        showDialogPanel(trajetToConfirm!!, context)
+                        //showDialogPanel(trajetToConfirm!!, context)
                         // showDialog = false
                     }
                     if (startRides) {
