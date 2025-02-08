@@ -24,10 +24,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.carpooling_project.model.Utilisateur
+import com.google.firebase.firestore.util.Util
 import kotlinx.coroutines.launch
 import tg.crsandroid.carpool.R
 import tg.crsandroid.carpool.model.Reservation
@@ -66,6 +70,7 @@ fun RideListScreen(
     var selectedTrajet by remember { mutableStateOf<Trajet?>(null) }
     var trajets by remember { mutableStateOf<List<Trajet>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var currConducteur: Utilisateur? = Utilisateur()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -135,10 +140,21 @@ fun RideListScreen(
                     val near = findNearbyDrivers(userDetails.userLocation!!, userDetails.userDestination!!, trajets, 5.0)
                     Log.i("RideList", "Near : ${near}")
                 }
+
                 items(trajets) { trajet ->
+                    LaunchedEffect(Unit) {
+                        try {
+                            currConducteur = getUserById(trajet.idConducteur)
+                            Log.i("SUCCESS", "Data fetched successfully")
+                        } catch (e: Exception) {
+                            Log.e("ERROR", "Error fetching data", e)
+                            currConducteur = null
+                        }
+                    }
                     var isExpanded by remember { mutableStateOf(false) }
                     TrajetCard(
                         trajet = trajet,
+                        conducteur = currConducteur,
                         isExpanded = isExpanded,
                         navController = navController,
                         onInfoClick = { isExpanded = !isExpanded },
@@ -168,6 +184,7 @@ fun RideListScreen(
 @Composable
 private fun TrajetCard(
     trajet: Trajet,
+    conducteur : Utilisateur?,
     isExpanded: Boolean,
     navController: NavController,
     onInfoClick: () -> Unit,
@@ -242,7 +259,7 @@ private fun TrajetCard(
                         InfoItem(
                             icon = Icons.Default.AccountCircle,
                             title = "Conducteur",
-                            value = "EDOH"
+                            value = if (conducteur != null) conducteur.nom!! else "Unknown"
                         )
                         InfoItem(
                             icon = Icons.Default.DateRange,
@@ -436,4 +453,19 @@ private fun startChat(navController: NavController, route: String) {
         popUpTo(navController.graph.startDestinationId)
         launchSingleTop = true
     }
+}
+private suspend fun getUserById(id: String) : Utilisateur? {
+    return try {
+        FirestoreService.usersRepo.getUserById(id)
+    } catch (e: Exception) {
+        null
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewRideListScreen() {
+    RideListScreen(
+        onBackPressed = {},
+        navController = rememberNavController()
+    )
 }

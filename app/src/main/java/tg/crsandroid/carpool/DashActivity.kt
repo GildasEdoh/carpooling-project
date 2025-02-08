@@ -6,15 +6,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import tg.crsandroid.carpool.presentation.screens.chat.ChatHomeScreen
 import tg.crsandroid.carpool.presentation.screens.chat.ChatScreen
 import tg.crsandroid.carpool.presentation.screens.home.Content
+import tg.crsandroid.carpool.presentation.screens.login.ProfileInterface
 import tg.crsandroid.carpool.presentation.screens.ride.RideListScreen
 import tg.crsandroid.carpool.service.FirestoreService
 
@@ -50,9 +53,14 @@ class DashActivity : ComponentActivity() {
                 // HistoryScreen(navController)
                 Log.i("Dash", "Not initilized")
             }
-            composable("ChatScreen/{user1}/{user2}") {backStackEntry ->
-                val user1 = backStackEntry.arguments?.getString("user1")
-                val user2 = backStackEntry.arguments?.getString("user2")
+            composable("ChatScreen/{user1}/{user2}",
+                arguments = listOf(
+                    navArgument("user1") { type = NavType.StringType },
+                    navArgument("user2") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val user1 = backStackEntry.arguments?.getString("user1") ?: ""
+                val user2 = backStackEntry.arguments?.getString("user2") ?: ""
                 ChatScreen(navController, user1, user2)
                 Log.i("Dash", "Not initialized")
             }
@@ -63,6 +71,10 @@ class DashActivity : ComponentActivity() {
             composable("Profil") {
                 // ProfileScreen(navController)
                 // Log.i("Dash", "Not initilized")
+                ProfileInterface(navController,
+                    onBackPressed = {
+                        navController.popBackStack()
+                    })
             }
             composable("listeTrajets") {
                 RideListScreen(onBackPressed = {
@@ -73,6 +85,5 @@ class DashActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
