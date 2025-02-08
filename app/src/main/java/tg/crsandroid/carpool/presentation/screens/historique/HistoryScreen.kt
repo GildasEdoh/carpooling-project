@@ -26,7 +26,6 @@ data class RideHistory(
     val startLocation: String,
     val endLocation: String
 )
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(navController: NavController, rides: List<RideHistory>, onBackClick: () -> Unit) {
@@ -34,7 +33,7 @@ fun HistoryScreen(navController: NavController, rides: List<RideHistory>, onBack
 
         // En-tête
         TopAppBar(
-            title = { Text("Historique", color=Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold) },
+            title = { Text("Historique", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold) },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
                     Icon(
@@ -45,15 +44,29 @@ fun HistoryScreen(navController: NavController, rides: List<RideHistory>, onBack
             }
         )
 
-        // Liste des trajets
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            items(rides) { ride ->
-                RideItem(ride)
-                Spacer(modifier = Modifier.height(12.dp))
+        if (rides.isEmpty()) {
+            // Message si aucun trajet disponible
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Aucun historique de trajets disponible",
+                    fontSize = 16.sp,
+                    color = Color.Gray
+                )
+            }
+        } else {
+            // Liste des trajets
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                items(rides) { ride ->
+                    RideItem(ride)
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
         }
     }

@@ -19,6 +19,8 @@ import tg.crsandroid.carpool.presentation.screens.Login.LoginScreen
 import tg.crsandroid.carpool.presentation.screens.Login.SignInScreen
 import tg.crsandroid.carpool.presentation.screens.chat.ChatHomeScreen
 import tg.crsandroid.carpool.presentation.screens.chat.ChatScreen
+import tg.crsandroid.carpool.presentation.screens.historique.HistoryScreen
+import tg.crsandroid.carpool.presentation.screens.historique.RideHistory
 import tg.crsandroid.carpool.presentation.screens.home.Content
 import tg.crsandroid.carpool.presentation.screens.log.ProfileInterface
 import tg.crsandroid.carpool.presentation.screens.ride.RideListScreen
@@ -47,6 +49,10 @@ class DashActivity : ComponentActivity() {
     @Composable
     fun MainApp() {
         val navController = rememberNavController()
+        val sampleRides = listOf(
+            RideHistory("Gildas Doe", 3.0,"In Progress..", "Atakpamé", "Dapaong"),
+            RideHistory("John Doe", 4.5,"Completed", "Lomé", "Kara"),
+            )
 
         NavHost(navController = navController, startDestination = "Home") {
             composable("Home") {
@@ -62,7 +68,12 @@ class DashActivity : ComponentActivity() {
                 SignUpScreen(navController)
             }
             composable("History") {
-                // HistoryScreen(navController)
+                HistoryScreen(
+                    navController, rides = sampleRides,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                )
                 Log.i("Dash", "Not initilized")
             }
             composable("ChatScreen/{user1}/{user2}",
